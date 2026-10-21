@@ -1,4 +1,4 @@
-// Owner: lane L2. Library pipeline: goals → search (L1 gather) → label (+ embedding relevance) → score → llm → re-score → select.
+// Library pipeline: goals → search (gather) → label (+ embedding relevance) → score → llm → re-score → select.
 // Runs inside trace.withRun(libraryId, …) (the route does that); every LibraryEvent is kept for SSE replay and traced.
 import type { RunConfig } from '@shared/config'
 import { LibraryEvent, type Goals, type LibPaper, type LibraryRequest } from '@shared/library'
@@ -155,7 +155,7 @@ export async function runLibrary(s: LibraryState, deps: PipelineDeps): Promise<v
   emitLib(s, { type: 'goals', goals })
   emitLib(s, { type: 'stage', stage: 'goals', status: 'done', count: goals.subtopics.length, ms: g.ms, message: `${goals.model ? `planner ${goals.model}` : 'deterministic fallback (no planner)'} · ${goals.goals.length} goals · ${goals.subtopics.length} subtopics · ${goals.keywords.length} keywords · ${goals.knownPapers.length} known papers · ${goals.evidence.length} verified note quotes` })
 
-  // 2. search (L1)
+  // 2. search (gather)
   const sr = await timed(s, 'search', async () => {
     try {
       return await deps.gather(goals, req, c => { s.calls.push(c); emitLib(s, { type: 'source', source: c.source, query: c.query, count: c.count, ms: c.ms, ...(c.error ? { error: c.error } : {}) }) })

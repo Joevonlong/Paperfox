@@ -1,5 +1,5 @@
-// Tavily web search + ingestion helpers (spec §3.2 steps 1–2: classify URL, extract identifiers).
-// Owner: lane A2. Returns [] without TAVILY_API_KEY; never throws.
+// Tavily web search + ingestion helpers (classify URL, extract identifiers).
+// Returns [] without TAVILY_API_KEY; never throws.
 import { env } from '../env'
 import { clip, trace } from '../trace'
 

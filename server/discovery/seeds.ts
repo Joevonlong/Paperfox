@@ -1,4 +1,4 @@
-// Owner: lane A1. Seed input parsing (DOI / PMID / PMCID / OpenAlex W-id / URLs) and resolution to Seed.
+// Seed input parsing (DOI / PMID / PMCID / OpenAlex W-id / URLs) and resolution to Seed.
 import type { Paper, Seed } from '@shared/contracts'
 import { getWork, normDoi } from '../sources/openalex'
 import { fetchAbstracts } from '../sources/pubmed'

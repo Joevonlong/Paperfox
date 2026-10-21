@@ -1,4 +1,4 @@
-// Owner: lane W2 (D-36). Seed file import: .bib / .ris / CSL JSON / .csv / .txt → paper ids; PDF → DOI from the first 2 pages.
+// Seed file import: .bib / .ris / CSL JSON / .csv / .txt → paper ids; PDF → DOI from the first 2 pages.
 // Ids use the resolver's input formats: DOI "10.x/…", "PMID:<n>", "arXiv:<id>", OpenAlex "W<n>".
 export type SeedFormat = 'bibtex' | 'ris' | 'csl-json' | 'csv' | 'text' | 'pdf'
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Library results (lanes L3, U1, W1): pass rule (top X% + minimum score), filters, and the ranked papers as score
+// Library results (W1): pass rule (top X% + minimum score), filters, and the ranked papers as score
 // tiles (default) or a sortable sparkbar table (F-60, D-34; choice kept in localStorage). Every field of the old text
 // row is on the tile / row, in its hover card, or in the paper view + report card (click / "Report card").
 import { computed, onBeforeUnmount, ref, watch } from 'vue'

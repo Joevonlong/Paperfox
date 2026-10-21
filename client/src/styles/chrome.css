@@ -1,5 +1,5 @@
 /* Window chrome shared by the workspace (adapted from Zettlr window-register/assets/{main,geometry}.css and the
-   docs/plan.html workspace mockup). Colors come from tokens.css only. */
+   original workspace mockup). Colors come from tokens.css only. */
 html,body{overflow:hidden}
 body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 ::selection{background:var(--seed-soft)}

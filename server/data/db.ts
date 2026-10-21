@@ -1,4 +1,4 @@
-// Owner: lane A1. SQLite store (spec §4.2). Plain SQL schema; one file at ${DATA_DIR}/papertrail.sqlite.
+// SQLite store (docs/architecture.md, Storage). Plain SQL schema; one file at ${DATA_DIR}/papertrail.sqlite.
 import Database from 'better-sqlite3'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'

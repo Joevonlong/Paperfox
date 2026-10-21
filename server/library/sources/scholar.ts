@@ -1,4 +1,4 @@
-// Owner: lane L1. Google Scholar ONLY via SerpAPI (engine=google_scholar). Never scrape scholar.google.com.
+// Google Scholar ONLY via SerpAPI (engine=google_scholar). Never scrape scholar.google.com.
 // Without SERPAPI_KEY the caller reports one skipped call. The api_key param is stripped from cache keys and traces.
 import { cachedJson } from '../../data/http'
 import { extractArxiv, extractDoi, extractPmid } from '../../sources/tavily'

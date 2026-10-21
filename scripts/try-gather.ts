@@ -1,4 +1,4 @@
-// Live check for lane L1: runs gather() for the melanoma topic with DEFAULT LibraryRequest settings.
+// Live check for the Library search: runs gather() for the melanoma topic with DEFAULT LibraryRequest settings.
 // Usage: pnpm tsx scripts/try-gather.ts   (traces in logs/runs/try-gather/; TRACE_CONSOLE=0 to silence trace lines)
 import '../server/env'
 import { LibraryRequest, type Goals } from '../shared/library'

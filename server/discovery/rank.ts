@@ -1,4 +1,4 @@
-// Owner: lane A1. Pure ranking logic (spec §2): seed-link features with the date check, lanes, within-lane
+// Pure ranking logic (docs/features/seed-discovery.md): seed-link features with the date check, lanes, within-lane
 // order before/after the judge, and the deterministic "why ranked here" string. No I/O here.
 import type { Candidate, Features, Judgement, Lane, Paper, RouteId, Seed, Signal } from '@shared/contracts'
 
@@ -15,7 +15,7 @@ export interface SeedLite { n: number; id: string; year: number | null; label: s
 
 const OA = (id: string) => ({ name: 'OpenAlex', url: `https://api.openalex.org/works/${id}` })
 
-/** Date check (spec §1.4): an in-link from seed s to candidate c counts only if year(c) ≤ year(s) + 1. */
+/** Date check: an in-link from seed s to candidate c counts only if year(c) ≤ year(s) + 1. */
 export function inLinkAllowed(candYear: number | null, seedYear: number | null): boolean {
   if (candYear == null || seedYear == null) return true
   return candYear <= seedYear + 1
@@ -47,7 +47,7 @@ export function freshCutoff(months: number, today = new Date()): string {
   return d.toISOString().slice(0, 10)
 }
 
-/** Lane precedence (spec §2.2): Retracted > NotAssessable > Core > Fresh > Linked > Bridges. */
+/** Lane precedence: Retracted > NotAssessable > Core > Fresh > Linked > Bridges. */
 export function assignLane(p: Pick<Paper, 'isRetracted' | 'abstract' | 'publicationDate' | 'year'>, links: number, freshFrom: string): Lane {
   if (p.isRetracted) return 'Retracted'
   if (!p.abstract && links < 3) return 'NotAssessable'
@@ -118,7 +118,7 @@ export function orderLanes(cands: Candidate[], rerankPct: Map<string, number>, s
   return out
 }
 
-/** Spec §2.3 diversity: an item whose cosine with an item above exceeds 0.92 moves below the next one (top `k` only). */
+/** Diversity: an item whose cosine with an item above exceeds 0.92 moves below the next one (top `k` only). */
 export function diversify(list: Candidate[], similarity: (a: string, b: string) => number | null, k = 60, threshold = 0.92) {
   const n = Math.min(list.length, k)
   const moved = new Set<string>()

@@ -12,7 +12,7 @@ vi.mock('idb-keyval', () => {
   return { get: async (k: string) => store.get(k), set: async (k: string, v: unknown) => { store.set(k, v) } }
 })
 
-describe('library store (chat API for lane U2)', () => {
+describe('library store (chat API)', () => {
   beforeEach(() => setActivePinia(createPinia()))
 
   it('applyProposal merges settings, re-scores in the browser and returns top-10 before/after', () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Vault graph. Owner: lane C. Force layout ported from Zettlr's GraphView (source/win-stats/GraphView.vue, GPL-3.0):
+// Vault graph. Force layout ported from Zettlr's GraphView (source/win-stats/GraphView.vue, GPL-3.0):
 // d3 forceSimulation with link / charge / collide / x / y forces and keyed joins; adds zoom/pan via d3.zoom,
 // ghost nodes for run candidates not yet in the vault, and enter animations while a run streams.
 import { computed, onActivated, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue'

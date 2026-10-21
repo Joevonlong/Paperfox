@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Library paper detail (lane L3): header, labels, score with every component, relations, the per-paper JSON
+// Library paper detail: header, labels, score with every component, relations, the per-paper JSON
 // (GET /api/library/:id/papers/:paperId) as a collapsible tree, and "Add to vault".
 import { computed, onMounted, ref } from 'vue'
 import { useLibrary } from '../stores/library'

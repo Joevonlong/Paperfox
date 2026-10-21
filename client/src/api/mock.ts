@@ -1,8 +1,8 @@
-// Dev mock of the discovery stream. Owner: lane C.
-// Turns docs/data/melanoma-lanes-snapshot.json (a real R1–R3 run, 13:00) into contract-valid RunEvents with
+// Dev mock of the discovery stream.
+// Turns server/demo/fixtures/melanoma-lanes-snapshot.json (a real R1–R3 run, 13:00) into contract-valid RunEvents with
 // realistic pacing. Abstracts, facet scores and judgements are NOT real: they are labeled "mock" so nobody
 // mistakes them for model output. Dev builds only, with ?mock=1 (never a fallback, R-3.1).
-import snapshot from '../../../docs/data/melanoma-lanes-snapshot.json'
+import snapshot from '../../../server/demo/fixtures/melanoma-lanes-snapshot.json'
 import { RunEvent, type Candidate, type Judgement, type Lane, type Paper, type RouteId, type RunRequest, type Seed, type Signal } from '@shared/contracts'
 import { PRESETS } from '@shared/config'
 
@@ -42,7 +42,7 @@ function seedFrom(n: number, input: string, s: typeof BASE_SEEDS[number]): Seed 
   }
 }
 
-// Title keyword rule as a stand-in for embedding facet scores (same rule as the docs/plan.html mockup).
+// Title keyword rule as a stand-in for embedding facet scores (the original design-mockup rule).
 const reTopic = /melanoma/i, reTopic2 = /cancer|tumou?r|neoantigen|immunotherap|checkpoint|pd-1|lymphocyte|t[- ]cell/i
 const reMethod = /single[- ]cell|scrna|rna[- ]seq|sequencing|transcriptom|multiomic|-omics|spatial|profil|align|aligner|toolkit|package|format|algorithm|framework|cluster/i
 const rePop = /patient|human|metasta|clinical|survival/i

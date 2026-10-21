@@ -1,4 +1,4 @@
-// Copied from Zettlr (source/win-stats/directed-graph.ts, GPL-3.0). Owner: lane C. Unchanged below this line.
+// Copied from Zettlr (source/win-stats/directed-graph.ts, GPL-3.0). Unchanged below this line.
 /**
  * @ignore
  * BEGIN HEADER

@@ -1,4 +1,4 @@
-// Owner: lane L2 / W2. Library files: {goals.json, library.json, graph.json, papers/<paperId>.json} in
+// Library files: {goals.json, library.json, graph.json, papers/<paperId>.json} in
 // ${WORKSPACE_DIR}/<question>/libraries/<id>/ (D-37) — or ${DATA_DIR}/library/<id>/ for builds without a question folder.
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from 'node:fs'
 import { join, resolve, sep } from 'node:path'

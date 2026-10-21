@@ -1,4 +1,4 @@
-// Library chat state (lane U2, D-26 / D-29). History per libraryId, persisted in localStorage (best effort).
+// Library chat state (D-26 / D-29). History per libraryId, persisted in localStorage (best effort).
 // POST /api/library/:id/chat for each user turn; Apply on a proposal → useLibrary().applyProposal → POST /applied.
 import { defineStore } from 'pinia'
 import { ChatResponse, type Proposal } from '@shared/library'

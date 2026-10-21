@@ -1,11 +1,11 @@
-// Owner: lane L2. Library mode HTTP API — see the comment at the end of shared/library.ts.
+// Library mode HTTP API — see the comment at the end of shared/library.ts.
 //   POST /api/library                       LibraryRequest -> { libraryId }
 //   GET  /api/library/:id/stream            SSE of LibraryEvent (replay then live)
 //   GET  /api/library/:id                   { goals, papers: LibPaper[] (all scored), request }
 //   GET  /api/library/:id/papers/:paperId   the per-paper JSON file (LibPaper)
-//   POST /api/library/:id/chat              ChatRequest -> ChatResponse (lane U2; logs/runs/<id>/chat.jsonl)
+//   POST /api/library/:id/chat              ChatRequest -> ChatResponse (logs/runs/<id>/chat.jsonl)
 //   POST /api/library/:id/applied           { prompt, proposal, before, after } -> { ok, movedIn }
-// LIBRARY_FIXTURE=1 swaps L1's gather() for the melanoma fixture source (server/library/fixtures.ts).
+// LIBRARY_FIXTURE=1 swaps gather() for the melanoma fixture source (server/library/fixtures.ts).
 import { Hono } from 'hono'
 import { streamSSE } from 'hono/streaming'
 import { randomUUID } from 'node:crypto'
@@ -22,7 +22,7 @@ import { DEMO_LIBRARY_ID, demoLibraryForChat } from './demo'
 
 export const library = new Hono()
 
-// ---- D-35: History (lane W2) ----
+// ---- D-35: History ----
 library.get('/libraries', c => {
   const q = c.req.query('questionId')
   // ?questionId=  (empty) → libraries without a question ("Earlier libraries"); absent → all
@@ -55,7 +55,7 @@ library.get('/library/:id/export', c => {
   return c.json(r)
 })
 
-// ---- D-37: question folders on disk (WORKSPACE_DIR/<question>/…), lane W2 ----
+// ---- D-37: question folders on disk (WORKSPACE_DIR/<question>/…) ----
 library.get('/questions', c => c.json({ questions: listQuestions(), root: 'workspace' }))
 
 library.post('/questions', async c => {
@@ -109,7 +109,7 @@ library.delete('/questions/:id/notes/*', c => {
   return deleteNote(decodeURIComponent(c.req.param('id')), notePath(c.req.url)) ? c.json({ ok: true }) : c.json({ error: 'note not found' }, 404)
 })
 
-// ---- D-36: seed file import (lane W2). multipart field "file"; ids are resolved by the client via POST /api/seeds/resolve ----
+// ---- D-36: seed file import. multipart field "file"; ids are resolved by the client via POST /api/seeds/resolve ----
 const MAX_SEED_FILE = 25 * 1024 * 1024
 library.post('/seeds/import', async c => {
   const form = await c.req.parseBody().catch(() => null)
@@ -203,7 +203,7 @@ library.get('/library/:id/papers/:paperId{.+}', c => {
   return c.json(r)
 })
 
-// ---- chat (lane U2, D-26 / D-29) ----
+// ---- chat (D-26 / D-29) ----
 const libCache = new Map<string, { goals: Goals | null; papers: LibPaper[] }>()
 function loadForChat(id: string): { goals: Goals | null; papers: LibPaper[] } | null {
   if (id === DEMO_LIBRARY_ID) return demoLibraryForChat()
