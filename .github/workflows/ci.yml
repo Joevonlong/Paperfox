@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # One leg per Node version. Branch protection does not require these by name;
+  # it requires the "gate" job below, which passes only if every leg passed.
+  gate-node:
+    name: gate (node ${{ matrix.node }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22 = minimum supported (engines.node); current = latest Node release.
+        node: ['22', 'current']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      # No "version" input: the pnpm version comes from packageManager in package.json.
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          cache: true
+      - run: node --version && pnpm --version
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm gate
+
+  gate:
+    name: gate
+    if: ${{ always() }}
+    needs: [gate-node]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Require every Node leg to pass
+        env:
+          RESULT: ${{ needs.gate-node.result }}
+        run: |
+          echo "gate (node matrix): $RESULT"
+          test "$RESULT" = success
+
+  hygiene:
+    name: hygiene
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: --range needs the merge base, gitleaks scans commits.
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check repository hygiene
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ "$EVENT_NAME" = pull_request ]; then
+            bash scripts/check-hygiene.sh --range "origin/${BASE_REF}...HEAD"
+          else
+            bash scripts/check-hygiene.sh
+          fi
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/$tarball" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/${tarball}"
+          echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum --check --strict
+          mkdir -p "$RUNNER_TEMP/gitleaks"
+          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP/gitleaks" gitleaks
+          echo "$RUNNER_TEMP/gitleaks" >> "$GITHUB_PATH"
+      - name: Scan for secrets
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          gitleaks version
+          # Scan only history reachable from HEAD (the default would scan every fetched branch).
+          if [ "$EVENT_NAME" = pull_request ]; then
+            log_opts="origin/${BASE_REF}..HEAD"
+          else
+            log_opts="HEAD"
+          fi
+          gitleaks git --no-banner --redact --verbose --log-opts="$log_opts" .
+
+  dependency-review:
+    name: dependency-review
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          # Allow list of licenses that can be combined with GPL-3.0-or-later.
+          # Anything else (GPL-2.0-only, SSPL, BUSL, non-commercial, ...) fails
+          # until a maintainer reviews it and extends this list.
+          allow-licenses: >-
+            0BSD, Apache-2.0, BlueOak-1.0.0, BSD-2-Clause, BSD-3-Clause, BSL-1.0,
+            CC0-1.0, ISC, MIT, MIT-0, MPL-2.0, Python-2.0, Unlicense, Zlib,
+            LGPL-2.1-only, LGPL-2.1-or-later, LGPL-3.0-only, LGPL-3.0-or-later,
+            GPL-2.0-or-later, GPL-3.0-only, GPL-3.0-or-later,
+            AGPL-3.0-only, AGPL-3.0-or-later

@@ -38,7 +38,7 @@ Type a research question, add the papers you already trust, and PaperTrail build
 ```bash
 git clone https://github.com/Joevonlong/PaperTrail.git && cd PaperTrail
 corepack enable pnpm
-pnpm install --config.strict-dep-builds=false && pnpm build
+pnpm install && pnpm build
 PORT=3030 pnpm start
 # open http://localhost:3030/?demo=1  (recorded real run; no keys, no network)
 ```
@@ -161,7 +161,7 @@ Requires Node 22+, pnpm (`corepack enable pnpm`) and git.
 
 ```bash
 git clone https://github.com/Joevonlong/PaperTrail.git && cd PaperTrail
-pnpm install --config.strict-dep-builds=false   # flag: pnpm otherwise stops on esbuild's ignored build script
+pnpm install
 cp .env.example .env.local                      # optional keys, see below
 
 pnpm dev                             # dev: http://localhost:5173 (API on :3001)
