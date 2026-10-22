@@ -55,10 +55,10 @@ export interface SeedRow { input: string; status: 'resolved' | 'not found' | 'du
 /** Q2-6: a seed resolved without OpenAlex (POST /api/seeds/resolve `resolvedVia`). */
 export interface SeedVia { input: string; paperId?: string; source: string; reason?: string }
 /** D-35: the last opened library per question (localStorage; '' = no question). */
-const LAST_KEY = (q: string | null) => `papertrail:lastLibrary:${q ?? ''}`
+const LAST_KEY = (q: string | null) => `paperfox:lastLibrary:${q ?? ''}`
 export const lastOpened = (q: string | null) => { try { return localStorage.getItem(LAST_KEY(q)) } catch { return null } }
 /** Q-1: the viewer's pass rule / weights / filters / topK per library (restored when the library is reopened). */
-export const LIB_SETTINGS_KEY = (id: string) => `papertrail:libSettings:${id}`
+export const LIB_SETTINGS_KEY = (id: string) => `paperfox:libSettings:${id}`
 const setLastOpened =(q: string | null, id: string | null) => { try { if (id) localStorage.setItem(LAST_KEY(q), id); else localStorage.removeItem(LAST_KEY(q)) } catch { /* private mode */ } }
 /** Seed note front matter -> table fields. */
 export function seedInfo(content: string): { title: string; year: string; id: string; label: string } {

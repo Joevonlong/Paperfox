@@ -17,7 +17,7 @@ const vault = useVault()
 const ui = useUi()
 const discovery = useDiscovery()
 const library = useLibrary()
-const THEME_KEY = 'papertrail:theme'
+const THEME_KEY = 'paperfox:theme'
 
 // Responsive shell: the editor keeps >= EDITOR_MIN px. As the window narrows, the file tree stops docking first
 // (it opens as an overlay drawer from the left), then the sidebar (overlay drawer from the right).

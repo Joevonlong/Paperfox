@@ -1,6 +1,6 @@
-// SQLite store (docs/architecture.md, Storage). Plain SQL schema; one file at ${DATA_DIR}/papertrail.sqlite.
+// SQLite store (docs/architecture.md, Storage). Plain SQL schema; one file at ${DATA_DIR}/paperfox.sqlite.
 import Database from 'better-sqlite3'
-import { mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 export type DB = Database.Database
@@ -51,10 +51,30 @@ export function dataDir(): string {
   return process.env.DATA_DIR || './data'
 }
 
+const DB_FILE = 'paperfox.sqlite'
+/** The file name before the rename to Paperfox. Remove this fallback one MINOR release after the rename. */
+const LEGACY_DB_FILE = 'papertrail.sqlite'
+const noted = new Set<string>()
+
+/**
+ * The SQLite file in `dir`. A data dir from before the rename has only the legacy file: keep using it in place
+ * (with its -wal and -shm files) and say so once, so existing caches and runs stay readable.
+ */
+export function dbPath(dir: string, log: (msg: string) => void = console.warn): string {
+  const path = join(dir, DB_FILE)
+  const legacy = join(dir, LEGACY_DB_FILE)
+  if (existsSync(path) || !existsSync(legacy)) return path
+  if (!noted.has(legacy)) {
+    noted.add(legacy)
+    log(`[db] using ${legacy} from before the rename; stop the server and rename it (with its -wal and -shm files) to ${DB_FILE} to switch`)
+  }
+  return legacy
+}
+
 /** Opens (once) the SQLite file. Pass ':memory:' in tests. */
 export function getDb(file?: string): DB {
   if (db) return db
-  const path = file ?? (() => { mkdirSync(dataDir(), { recursive: true }); return join(dataDir(), 'papertrail.sqlite') })()
+  const path = file ?? (() => { mkdirSync(dataDir(), { recursive: true }); return dbPath(dataDir()) })()
   db = new Database(path)
   db.pragma('journal_mode = WAL')
   db.pragma('synchronous = NORMAL')

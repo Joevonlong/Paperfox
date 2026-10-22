@@ -20,7 +20,7 @@ export interface ChatTurn {
   settingsAt?: LibSettings // the settings the proposal was made against (for the diff card)
 }
 
-const KEY = (id: string) => `papertrail:chat:${id}`
+const KEY = (id: string) => `paperfox:chat:${id}`
 const uid = () => Math.random().toString(36).slice(2, 10)
 
 function loadTurns(id: string): ChatTurn[] {
