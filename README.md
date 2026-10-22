@@ -143,7 +143,7 @@ Without keys, AI steps are skipped or fall back (for example, keyword overlap in
 
 ## Setup
 
-Requires Node 22+, pnpm (`corepack enable pnpm`) and git.
+Requires Node 22.13+, pnpm (`corepack enable pnpm`) and git. The full guide is [docs/development.md](docs/development.md).
 
 ```bash
 git clone https://github.com/Joevonlong/PaperTrail.git && cd PaperTrail
@@ -174,6 +174,19 @@ Check: `curl localhost:3001/api/health` lists the models and whether the Token F
 
 `pnpm gate` = typecheck + tests + build.
 
+## Contributing
+
+Contributions are welcome, and you need no API keys: tests and demo mode run offline. Start with
+[CONTRIBUTING.md](CONTRIBUTING.md), which explains how to pick work, open a pull request and what CI checks.
+
+- Look for [good first issues](https://github.com/Joevonlong/PaperTrail/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22).
+- Ideas and questions go to [Discussions](https://github.com/Joevonlong/PaperTrail/discussions).
+- Security reports go through [SECURITY.md](SECURITY.md), never a public issue.
+
+Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md). Project roles and decisions:
+[GOVERNANCE.md](GOVERNANCE.md), [MAINTAINERS.md](MAINTAINERS.md), [ROADMAP.md](ROADMAP.md),
+[CHANGELOG.md](CHANGELOG.md).
+
 ## Authors
 
 <table>
@@ -183,6 +196,17 @@ Check: `curl localhost:3001/api/health` lists the models and whether the Token F
     <td align="center"><a href="https://github.com/Lumberj3ck"><img src="https://github.com/Lumberj3ck.png?size=100" width="80" alt="Lumberj3ck"><br><sub><b>@Lumberj3ck</b></sub></a></td>
   </tr>
 </table>
+
+## Cite
+
+If you use PaperTrail in research, please cite it. [CITATION.cff](CITATION.cff) holds the metadata; GitHub's
+"Cite this repository" button turns it into APA or BibTeX.
+
+## Acknowledgements
+
+The Markdown editor, file manager and graph view build on code from [Zettlr](https://github.com/Zettlr/Zettlr)
+by Hendrik Erz and the Zettlr contributors (GPL-3.0). See [docs/third-party.md](docs/third-party.md) for the files
+and the data sources PaperTrail uses.
 
 ## License
 

@@ -166,6 +166,53 @@ else
   done < <(git "${GIT_OPTS[@]}" grep -l "$PRT_WORD" -- .github/workflows || true)
 fi
 
+# --- Rule: CODEOWNERS matches MAINTAINERS.md ---------------------------------
+# MAINTAINERS.md is the one list of maintainers; .github/CODEOWNERS must name
+# exactly the same GitHub logins (compared case-insensitively). --range mode
+# checks this only when the range touches either file; the no-argument mode
+# always checks it. Nothing is checked when both files are absent.
+check_codeowners() {
+  local owners_file='.github/CODEOWNERS' maintainers_file='MAINTAINERS.md'
+  local owners_text='' maintainers_text='' has_owners=0 has_maintainers=0
+  local owners maintainers only_owners only_maintainers
+
+  if [[ -n "$range" ]]; then
+    local touched
+    touched="$(git "${GIT_OPTS[@]}" diff --no-ext-diff --name-only "$range" -- "$owners_file" "$maintainers_file")"
+    [[ -n "$touched" ]] || return 0
+    if owners_text="$(git show "$tip:$owners_file" 2> /dev/null)"; then has_owners=1; fi
+    if maintainers_text="$(git show "$tip:$maintainers_file" 2> /dev/null)"; then has_maintainers=1; fi
+  else
+    if [[ -f "$owners_file" ]]; then owners_text="$(cat "$owners_file")" && has_owners=1; fi
+    if [[ -f "$maintainers_file" ]]; then maintainers_text="$(cat "$maintainers_file")" && has_maintainers=1; fi
+  fi
+
+  ((has_owners + has_maintainers > 0)) || return 0
+  if ((has_owners == 0 || has_maintainers == 0)); then
+    fail "only one of $owners_file and $maintainers_file exists (add or remove both)"
+    return 0
+  fi
+
+  # CODEOWNERS: every @login on non-comment lines (teams such as @org/name are not logins).
+  owners="$(printf '%s\n' "$owners_text" | sed -e 's/#.*//' | tr -s '[:blank:]' '\n' |
+    grep -E '^@[A-Za-z0-9-]+$' | cut -c2- | tr '[:upper:]' '[:lower:]' | sort -u)" || true
+  # MAINTAINERS.md: the @login in the first cell of each table row.
+  maintainers="$(printf '%s\n' "$maintainers_text" | awk -F'|' '/^[[:space:]]*\|/ { print $2 }' |
+    grep -oE '@[A-Za-z0-9-]+' | cut -c2- | tr '[:upper:]' '[:lower:]' | sort -u)" || true
+
+  if [[ -z "$maintainers" ]]; then
+    fail "no @login found in the table in $maintainers_file"
+    return 0
+  fi
+  if [[ "$owners" != "$maintainers" ]]; then
+    only_owners="$(comm -23 <(printf '%s\n' "$owners") <(printf '%s\n' "$maintainers") | sed '/^$/d' | paste -sd, -)"
+    only_maintainers="$(comm -13 <(printf '%s\n' "$owners") <(printf '%s\n' "$maintainers") | sed '/^$/d' | paste -sd, -)"
+    fail "$owners_file and $maintainers_file list different logins (only in CODEOWNERS: ${only_owners:-none}; only in MAINTAINERS.md: ${only_maintainers:-none})"
+  fi
+}
+check_codeowners
+# --- End rule: CODEOWNERS matches MAINTAINERS.md ------------------------------
+
 if ((failures > 0)); then
   echo "hygiene: $failures problem(s) found" >&2
   exit 1

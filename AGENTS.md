@@ -13,7 +13,8 @@ Data is stored in SQLite and plain files. The license is GPL-3.0-or-later.
 ## Setup & commands
 
 ```bash
-pnpm install            # see README "Setup" for the current flags
+corepack enable pnpm    # Node 25+: `npm i -g corepack` first; full guide: docs/development.md
+pnpm install
 cp .env.example .env.local   # maintainers only (optional keys); everything runs without them
 ```
 
@@ -26,6 +27,7 @@ cp .env.example .env.local   # maintainers only (optional keys); everything runs
 | `pnpm typecheck` | `vue-tsc` over client, server and shared |
 | `pnpm test` | Vitest, offline |
 | `pnpm gate` | typecheck + test + build. Run it before every PR. |
+| `pnpm hygiene` | Repository rules CI enforces (local paths, env files, large files, ...): [CONTRIBUTING.md#hygiene](CONTRIBUTING.md#hygiene) |
 
 - `scripts/docker-local.sh` builds and runs the Docker image on http://localhost:3040.
 - Add `?demo=1` to any app URL to replay a recorded real run. It needs no keys and no network.
@@ -52,6 +54,8 @@ cp .env.example .env.local   # maintainers only (optional keys); everything runs
 | Adding a library search source | [docs/adding-a-source.md](docs/adding-a-source.md) |
 | `D-xx`, `CR-n` and other ids in code comments | [docs/adr/0001-early-design-decisions.md](docs/adr/0001-early-design-decisions.md) |
 | Code and data from other projects | [docs/third-party.md](docs/third-party.md) |
+| Environment setup, local data folders, recorded data, evaluation levels | [docs/development.md](docs/development.md) |
+| Which paths trigger `needs-eval` / `contract-change` | [.github/labeler.yml](.github/labeler.yml) |
 | Ranking evaluation and its results | [eval/](eval/) (`RESULTS_LIBRARY.md`, `RESULTS_SEED_PIPELINE.md`) |
 
 Comments also cite early task ids (`CR-n`, `E-n`, `F-n`, `J-n`, `Q-n`, `Q2-n`, `R-n`, `V-n`); the same ADR explains them.
@@ -65,13 +69,20 @@ Do not add new ones. Link an issue or an ADR instead.
 - **Additive changes** need a note in the PR description. Examples: a new optional field, a new enum value
   such as a `SourceName`, a new optional env var.
 - **Breaking changes** need an ADR in `docs/adr/` (copy `0000-template.md`) and maintainer agreement. Examples:
-  removing or renaming a field, making a field required, changing a meaning or a default.
+  removing or renaming a field, making a field required, changing a meaning or a default. The full definition is in
+  [CONTRIBUTING.md#versioning](CONTRIBUTING.md#versioning); breaking PR titles carry `!`.
 - When behaviour changes, update the matching `docs/features/<slug>.md` in the same PR.
+
+## Picking work
+
+Follow the decision table in [CONTRIBUTING.md § Finding something to work on](CONTRIBUTING.md#finding-something-to-work-on).
+Do not start on an issue assigned to someone else.
 
 ## If you are an agent working from a fork
 
 - You need no keys. Do not read, create or ask for `.env.local` or any secret.
-- Verify only with `pnpm gate`. Do not run `eval/`, record demos, or regenerate `docs/media/`.
+- Verify only with `pnpm gate` (and `pnpm hygiene`). Do not run `eval/`, record demos, regenerate `docs/media/`,
+  or edit `CHANGELOG.md`.
 - PR titles use Conventional Commits and must match
   `^(feat|fix|perf|refactor|docs|test|build|ci|chore|revert)(\([a-z0-9-]+\))?!?: .+`.
 
@@ -80,6 +91,12 @@ Do not add new ones. Link an issue or an ADR instead.
 Changes to search, labels, scoring, the pass rule, prompts or models can move results in ways tests do not catch.
 Maintainers run the hold-out evaluation for those PRs. Do not run `eval/library_eval.ts` yourself, because it needs
 keys and spends API budget. In the PR, say which ranking behaviour you expect to change and why.
+
+## PRs
+
+- Fill in [.github/pull_request_template.md](.github/pull_request_template.md); say whether AI tools helped.
+- The author is responsible for every line and must be able to explain it in review.
+- CI must pass `gate`, `hygiene` and `pr-title`. PRs are squash-merged. Details: [CONTRIBUTING.md](CONTRIBUTING.md#pull-requests).
 
 ## Provenance
 

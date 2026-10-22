@@ -1,0 +1,71 @@
+name: Bug report
+description: Something in PaperTrail does not work as documented.
+labels: ["type: bug", "status: triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Ideas and questions go to Discussions, and vulnerabilities go to a private
+        vulnerability report (see the links on the previous page). Never paste API keys.
+  - type: input
+    id: version
+    attributes:
+      label: Commit
+      description: The commit you built from (`git rev-parse --short HEAD`).
+      placeholder: "a1b2c3d"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How do you run PaperTrail?
+      options:
+        - From source (`pnpm dev` or `pnpm start`)
+        - Docker, built locally (`scripts/docker-local.sh` or `docker build`)
+    validations:
+      required: true
+  - type: textarea
+    id: mode
+    attributes:
+      label: Mode and keys
+      description: |
+        Demo mode (`?demo=1`) or your own keys? If you use keys, paste the `keys` part of `GET /api/health`.
+        It shows only whether each key is set (true or false), never the values.
+      render: json
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: "Firefox 140 on macOS"
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open http://localhost:5173/?demo=1
+        2. Click ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected and actual behaviour
+      description: What you expected to happen, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Server output, browser console, or the relevant lines from `logs/runs/<id>/`.
+        Remove any API keys or personal data before pasting.
+      render: text
+  - type: checkboxes
+    id: duplicates
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched the existing issues and this is not a duplicate.
+          required: true
