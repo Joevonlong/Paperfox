@@ -1,7 +1,7 @@
-// Lane U2. The chat column talks to the library store (lane U1) only through these two calls:
+// The chat column talks to the library store only through these two calls:
 //   useLibrary().currentSettings() → { weights, topPercent, threshold, filters }
 //   useLibrary().applyProposal(p)   → { before, after } (top-10 paper ids)
-// Until U1's versions are merged this file falls back to the store fields that already exist (weights, threshold, top).
+// If the store lacks either call, this file falls back to the store fields (weights, threshold, top).
 import type { Filters, LibPaper, Proposal, Weights } from '@shared/library'
 import { DEFAULT_WEIGHTS } from '@shared/library'
 import { summarizeProposal } from './summary'
@@ -9,7 +9,7 @@ import { summarizeProposal } from './summary'
 export interface LibSettings { weights: Weights; topPercent: number; threshold: number; filters: Filters }
 export interface ApplyResult { before: string[]; after: string[] }
 
-/** The parts of U1's store the chat uses (all optional so the shim compiles before and after U1 merges). */
+/** The parts of the library store the chat uses (all optional, so the shim works with any store shape). */
 export interface LibLike {
   libraryId: string | null
   weights?: Weights
@@ -34,7 +34,7 @@ export async function applyProposal(lib: LibLike, proposal: Proposal): Promise<A
   // Q-3b: the store shows `rationale` in its "Applied from chat" banner, so hand it the clean user-facing summary
   const p: Proposal = { ...proposal, rationale: summarizeProposal(proposal, currentSettings(lib)) }
   if (typeof lib.applyProposal === 'function') return await lib.applyProposal(p)
-  // Fallback until U1's applyProposal lands: merge + normalize weights, set the pass rule; filters are left to U1.
+  // Fallback when the store has no applyProposal: merge + normalize weights, set the pass rule; filters are left to the store.
   const before = top10(lib)
   if (p.weights && lib.weights) {
     const merged = { ...lib.weights, ...p.weights } as Weights

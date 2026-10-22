@@ -1,0 +1,400 @@
+name: Release
+
+# Verify before publish. A pushed tag vX.Y.Z:
+#   preflight  started from a v* tag (or by hand from main), tag matches package.json,
+#              the commit is on main, CHANGELOG.md has the section
+#   build      one image per architecture on a native runner, pushed by digest only (no tag)
+#   verify     each digest is pulled back and smoke-tested (scripts/release/smoke.sh)
+#   publish    the verified digests get the tags X.Y.Z and sha-<short>, plus X.Y if this is
+#              the highest stable version of its MINOR and latest if it is the highest stable
+#              version of all; then a provenance attestation and a GitHub Release (marked
+#              latest under the same rule)
+# "Highest" compares every stable vX.Y.Z tag in the repository, including tags whose release
+# failed. Re-running an older version therefore never moves X.Y, latest or the Release's
+# latest mark back to it.
+# If build or verify fails, no tag moves and no Release appears. That version number is
+# then retired: fix main and release the next patch version. If publish fails part way,
+# re-run the failed jobs: publish reuses the verified digests, re-applies the same tags and
+# updates the existing Release's notes. Starting this workflow by hand with the tag instead
+# builds and verifies new digests, and X.Y.Z and sha-<short> then point to them.
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to (re)run, e.g. v0.2.0. Start the run from main.
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    name: preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      version: ${{ steps.check.outputs.version }}
+      minor: ${{ steps.check.outputs.minor }}
+      prerelease: ${{ steps.check.outputs.prerelease }}
+      latest: ${{ steps.check.outputs.latest }}
+      minor_latest: ${{ steps.check.outputs.minor_latest }}
+      sha: ${{ steps.check.outputs.sha }}
+      short: ${{ steps.check.outputs.short }}
+      image: ${{ steps.check.outputs.image }}
+      previous: ${{ steps.check.outputs.previous }}
+      migrations: ${{ steps.check.outputs.migrations }}
+    steps:
+      # A tag push must come from refs/tags/v*, and a manual run must be started from main, so
+      # the workflow file that runs is the one on a release tag or on main. Limit: anyone with
+      # write access can edit this file on a branch and run that copy, which skips this check.
+      # That layer relies on trusting maintainers, not on a technical control.
+      - name: Resolve the tag
+        id: tag
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          REF: ${{ github.ref }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$EVENT_NAME" = workflow_dispatch ]; then
+            if [ "$REF" != refs/heads/main ]; then
+              echo "::error title=release trigger::start a manual release run from main, not $REF"
+              exit 1
+            fi
+            tag="$INPUT_TAG"
+          elif [[ "$REF" == refs/tags/v* ]]; then
+            tag="$REF_NAME"
+          else
+            echo "::error title=release trigger::a release must be triggered by a v* tag, not $REF"
+            exit 1
+          fi
+          if [[ ! "$tag" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error title=release tag::'$tag' is not a release tag (vX.Y.Z or vX.Y.Z-pre)"
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ steps.tag.outputs.tag }}
+          # Full history and every branch: the main check and the previous tag need them.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check version, branch and changelog
+        id: check
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          version="${TAG#v}"
+          pkg_version="$(node -p "require('./package.json').version")"
+          if [ "$pkg_version" != "$version" ]; then
+            echo "::error title=release version::tag $TAG does not match package.json version $pkg_version"
+            exit 1
+          fi
+          sha="$(git rev-parse HEAD)"
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "::error title=release branch::$TAG ($sha) is not on main"
+            exit 1
+          fi
+          echo "Release notes for $version:"
+          bash scripts/release/notes.sh "$version"
+
+          if [[ "$version" == *-* ]]; then prerelease=true; else prerelease=false; fi
+          core="${version%%-*}"
+          # The newest earlier release tag (stable only) is the upgrade source for verify.
+          previous="$(git tag --list 'v*.*.*' --sort=-v:refname --merged "$sha" |
+            grep -Ev -- '-' | grep -vx -- "$TAG" | head -n 1 || true)"
+          # X.Y and latest move only for the highest stable version (in its MINOR / overall),
+          # so re-running an older release never moves them back.
+          stable="$(git tag --list 'v*.*.*' |
+            grep -E '^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' | sort -V || true)"
+          latest=false
+          minor_latest=false
+          if [ "$prerelease" = false ]; then
+            if [ "$(tail -n 1 <<< "$stable")" = "$TAG" ]; then latest=true; fi
+            if [ "$(grep -F -- "v${core%.*}." <<< "$stable" | tail -n 1)" = "$TAG" ]; then minor_latest=true; fi
+          fi
+          migrations=0
+          if [ -d server/data/migrations ]; then
+            migrations="$(find server/data/migrations -maxdepth 1 -type f | wc -l | tr -d ' ')"
+          fi
+          {
+            echo "version=$version"
+            echo "minor=${core%.*}"
+            echo "prerelease=$prerelease"
+            echo "latest=$latest"
+            echo "minor_latest=$minor_latest"
+            echo "sha=$sha"
+            echo "short=${sha:0:7}"
+            echo "image=ghcr.io/${GITHUB_REPOSITORY,,}"
+            echo "previous=$previous"
+            echo "migrations=$migrations"
+          } | tee -a "$GITHUB_OUTPUT"
+
+  build:
+    name: build (${{ matrix.arch }})
+    needs: [preflight]
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          # Native runners per architecture: better-sqlite3 compiles natively, no QEMU.
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.preflight.outputs.sha }}
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # No build cache: a release image is built from the tagged source only.
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          platforms: linux/${{ matrix.arch }}
+          labels: |
+            org.opencontainers.image.title=PaperTrail
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ needs.preflight.outputs.sha }}
+            org.opencontainers.image.version=${{ needs.preflight.outputs.version }}
+            org.opencontainers.image.licenses=GPL-3.0-or-later
+          sbom: true
+          provenance: mode=max
+          outputs: type=image,name=${{ needs.preflight.outputs.image }},push-by-digest=true,name-canonical=true,push=true
+      - name: Save the digest
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/digest"
+          echo "$DIGEST" > "$RUNNER_TEMP/digest/$ARCH"
+          echo "$ARCH: $DIGEST"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: digest-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digest/${{ matrix.arch }}
+          if-no-files-found: error
+          retention-days: 7
+
+  verify:
+    name: verify (${{ matrix.arch }})
+    needs: [preflight, build]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.preflight.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: digest-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digest
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Smoke-test the digest
+        env:
+          ARCH: ${{ matrix.arch }}
+          IMAGE: ${{ needs.preflight.outputs.image }}
+          VERSION: ${{ needs.preflight.outputs.version }}
+          PREVIOUS: ${{ needs.preflight.outputs.previous }}
+          MIGRATIONS: ${{ needs.preflight.outputs.migrations }}
+        run: |
+          set -o pipefail
+          ref="$IMAGE@$(cat "$RUNNER_TEMP/digest/$ARCH")"
+          docker pull "$ref"
+          args=(--version "$VERSION")
+          # Upgrade check: data written by the previous release must stay readable.
+          # Required once server/data/migrations/ holds two or more migrations.
+          if [ -n "$PREVIOUS" ] && docker pull "$IMAGE:${PREVIOUS#v}"; then
+            args+=(--previous "$IMAGE:${PREVIOUS#v}")
+          elif [ "$MIGRATIONS" -ge 2 ]; then
+            echo "::error title=upgrade check::no previous release image to upgrade from (previous tag: '${PREVIOUS:-none}')"
+            exit 1
+          else
+            echo "::notice title=upgrade check::skipped (previous release image: '${PREVIOUS:-none}')"
+          fi
+          mkdir -p "$RUNNER_TEMP/smoke"
+          bash scripts/release/smoke.sh "$ref" "${args[@]}" | tee "$RUNNER_TEMP/smoke/$ARCH.txt"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: smoke-${{ matrix.arch }}
+          path: ${{ runner.temp }}/smoke/${{ matrix.arch }}.txt
+          if-no-files-found: warn
+          retention-days: 30
+
+  publish:
+    name: publish
+    needs: [preflight, verify]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+      attestations: write
+    env:
+      TAG: ${{ needs.preflight.outputs.tag }}
+      VERSION: ${{ needs.preflight.outputs.version }}
+      MINOR: ${{ needs.preflight.outputs.minor }}
+      PRERELEASE: ${{ needs.preflight.outputs.prerelease }}
+      LATEST: ${{ needs.preflight.outputs.latest }}
+      MINOR_LATEST: ${{ needs.preflight.outputs.minor_latest }}
+      SHORT: ${{ needs.preflight.outputs.short }}
+      IMAGE: ${{ needs.preflight.outputs.image }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.preflight.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: digest-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/digest
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: smoke-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/smoke
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag the verified digests
+        id: index
+        env:
+          SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
+          REVISION: ${{ needs.preflight.outputs.sha }}
+        run: |
+          sources=()
+          for f in "$RUNNER_TEMP"/digest/*; do sources+=("$IMAGE@$(cat "$f")"); done
+          tags=(-t "$IMAGE:$VERSION" -t "$IMAGE:sha-$SHORT")
+          # Prereleases get only their exact version and sha tags (preflight sets both flags to false).
+          if [ "$MINOR_LATEST" = true ]; then tags+=(-t "$IMAGE:$MINOR"); fi
+          if [ "$LATEST" = true ]; then tags+=(-t "$IMAGE:latest"); fi
+          echo "Tags: ${tags[*]}"
+          docker buildx imagetools create "${tags[@]}" \
+            --annotation "index:org.opencontainers.image.source=$SOURCE_URL" \
+            --annotation "index:org.opencontainers.image.revision=$REVISION" \
+            --annotation "index:org.opencontainers.image.version=$VERSION" \
+            --annotation "index:org.opencontainers.image.licenses=GPL-3.0-or-later" \
+            --annotation "index:org.opencontainers.image.description=PaperTrail $VERSION" \
+            "${sources[@]}"
+          digest="$(docker buildx imagetools inspect "$IMAGE:$VERSION" --format '{{json .Manifest}}' | jq -r .digest)"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          docker buildx imagetools inspect "$IMAGE:$VERSION"
+
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ${{ needs.preflight.outputs.image }}
+          subject-digest: ${{ steps.index.outputs.digest }}
+          push-to-registry: true
+
+      - name: Write the release notes
+        env:
+          INDEX_DIGEST: ${{ steps.index.outputs.digest }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          notes="$RUNNER_TEMP/release-notes.md"
+          bash scripts/release/notes.sh "$VERSION" > "$notes"
+          {
+            echo
+            echo "## Verification"
+            echo
+            echo "Image: \`$IMAGE:$VERSION\` (index digest \`$INDEX_DIGEST\`)"
+            echo
+            echo "| Architecture | Digest | /api/health version | Smoke test |"
+            echo "|---|---|---|---|"
+            for f in "$RUNNER_TEMP"/digest/*; do
+              arch="${f##*/}"
+              log="$RUNNER_TEMP/smoke/$arch.txt"
+              health="$(sed -nE 's/^PASS health\.version: (.*)$/\1/p' "$log")"
+              result="$(grep -E '^smoke: [0-9]+ passed' "$log" | sed 's/^smoke: //')"
+              echo "| $arch | \`$(cat "$f")\` | ${health:-?} | ${result:-?} |"
+            done
+            echo
+            for f in "$RUNNER_TEMP"/smoke/*.txt; do
+              echo "<details><summary>Smoke test output ($(basename "$f" .txt))</summary>"
+              echo
+              echo '```'
+              grep -E '^(PASS|FAIL) ' "$f"
+              echo '```'
+              echo
+              echo "</details>"
+              echo
+            done
+            echo "Build provenance: \`gh attestation verify oci://$IMAGE@$INDEX_DIGEST --repo $GITHUB_REPOSITORY\`"
+            echo
+            echo "Corresponding source: tag [$TAG]($REPO_URL/tree/$TAG). Build instructions: [docs/development.md]($REPO_URL/blob/$TAG/docs/development.md)."
+          } >> "$notes"
+          cat "$notes"
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="$RUNNER_TEMP/release-notes.md"
+          # Only the highest stable version is marked latest; an older one never takes the mark.
+          if [ "$LATEST" = true ]; then latest=(--latest); else latest=(--latest=false); fi
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "Release $TAG exists; updating its notes."
+            if [ "$LATEST" = true ]; then
+              gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file "$notes" --latest
+            else
+              gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file "$notes"
+            fi
+          elif [ "$PRERELEASE" = true ]; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" \
+              --notes-file "$notes" --prerelease --latest=false
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" \
+              --notes-file "$notes" "${latest[@]}"
+          fi
+
+  # deploy-demo goes here once the demo platform is chosen: it needs [preflight, publish],
+  # deploys the verified index digest (never a tag), then checks <demo-url>/api/health for
+  # the new version and demoOnly: true.

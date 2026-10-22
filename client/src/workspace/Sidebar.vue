@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Owner: lane B. Zettlr's MainSidebar tabs: Library (lane L3's LibraryPanel; replaced Discover per D-23), Related (RelatedFilesTab), References (ReferencesTab).
+// Zettlr's MainSidebar tabs: Library (LibraryPanel; replaced Discover per D-23), Related (RelatedFilesTab), References (ReferencesTab).
 import { computed, ref } from 'vue'
 import { useUi, type SideTab } from '../stores/ui'
 import { useVault, type Note } from '../stores/vault'

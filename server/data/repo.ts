@@ -1,4 +1,4 @@
-// Owner: lane A1. The only module other code uses to touch the store (spec §4.5).
+// The only module other code uses to touch the store (docs/architecture.md, Storage).
 import type { Candidate, Judgement, Paper, RunSnapshot } from '@shared/contracts'
 import { getDb } from './db'
 import { sha256 } from './http'

@@ -3,20 +3,6 @@
 <p align="center"><b>Start from the papers you trust. Find the ones you missed, with receipts.</b></p>
 
 <p align="center">
-  <a href="#awards">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/media/award-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="docs/media/award-light.svg">
-      <img src="docs/media/award-light.svg" width="900" alt="Hackathon winner: Nebius & NVIDIA Hackathon, 18 October 2026, track Healthcare & Life Sciences, Research Paper Discovery">
-    </picture>
-  </a>
-</p>
-
-<p align="center">
-  <a href="#awards"><img alt="Hackathon winner: Nebius & NVIDIA 2026" src="https://img.shields.io/badge/%F0%9F%8F%86%20Hackathon%20winner-Nebius%20%26%20NVIDIA%202026-C9971C?style=for-the-badge&labelColor=2B2208"></a>
-</p>
-
-<p align="center">
   <img alt="Vue 3" src="https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white">
   <img alt="Hono" src="https://img.shields.io/badge/Hono-Node%2022-E36002?logo=hono&logoColor=white">
   <img alt="Nebius Token Factory" src="https://img.shields.io/badge/Nebius-Token%20Factory-0b1f3a">
@@ -31,14 +17,14 @@
 </p>
 <p align="center"><sub>Real app, demo mode (replay of a recorded real run, sped up 2x).</sub></p>
 
-Type a research question, add the papers you already trust, and PaperTrail builds a graded library of new papers, with the evidence behind every score. Winner of the Healthcare & Life Sciences "Research Paper Discovery" track at the Nebius & NVIDIA Hackathon (18 October 2026).
+Type a research question, add the papers you already trust, and PaperTrail builds a graded library of new papers, with the evidence behind every score.
 
 ## Quick start
 
 ```bash
 git clone https://github.com/Joevonlong/PaperTrail.git && cd PaperTrail
-corepack enable pnpm
-pnpm install --config.strict-dep-builds=false && pnpm build
+corepack enable pnpm   # Node 25+: run `npm i -g corepack` first
+pnpm install && pnpm build
 PORT=3030 pnpm start
 # open http://localhost:3030/?demo=1  (recorded real run; no keys, no network)
 ```
@@ -114,7 +100,7 @@ Hover a node to highlight its links. The demo graph shows 60 papers and 287 cita
 
 <table>
 <tr>
-<td width="50%" valign="top"><b>Question folders and seeds.</b> One question = one folder with its notes and seed papers. Paste DOIs, PMIDs, arXiv or OpenAlex ids, or upload .bib, .ris, CSL JSON or PDF.<br><br><img src="docs/media/question-seeds.png" width="100%" alt="Question folder with the seed table and the paste and upload box"></td>
+<td width="50%" valign="top"><b>Question folders and seeds.</b> One question = one folder with its notes and seed papers. Paste DOIs, PMIDs, arXiv or OpenAlex ids, or upload .bib, .ris, CSL JSON, CSV, plain text or PDF.<br><br><img src="docs/media/question-seeds.png" width="100%" alt="Question folder with the seed table and the paste and upload box"></td>
 <td width="50%" valign="top"><b>Vault and export.</b> Add a paper as a Markdown note (front matter, verified quote, citation relations) in the question's <code>notes/</code> folder. Export BibTeX, CSL JSON or a Markdown .zip.<br><br><img src="docs/media/vault-export.png" width="100%" alt="Literature note in the vault next to the References tab with export buttons"></td>
 </tr>
 </table>
@@ -153,15 +139,15 @@ Only measured numbers are listed. `?demo=1` replays a real run; the production b
 | Judge (LLM read) | `nvidia/Nemotron-3_5-Lightning` |
 | Planner and chat | `nvidia/nemotron-3-super-120b-a12b` |
 
-Without keys, AI steps are skipped or fall back (for example, keyword overlap instead of embeddings), and the stage says so. Specs: [docs/PRODUCT_PLAN.md](docs/PRODUCT_PLAN.md), [docs/LIBRARY_SPEC.md](docs/LIBRARY_SPEC.md).
+Without keys, AI steps are skipped or fall back (for example, keyword overlap instead of embeddings), and the stage says so. Docs: [features](docs/features/README.md), [architecture](docs/architecture.md), [adding a search source](docs/adding-a-source.md), [third-party code and data](docs/third-party.md).
 
 ## Setup
 
-Requires Node 22+, pnpm (`corepack enable pnpm`) and git.
+Requires Node 22.13+, pnpm (`corepack enable pnpm`) and git. The full guide is [docs/development.md](docs/development.md).
 
 ```bash
 git clone https://github.com/Joevonlong/PaperTrail.git && cd PaperTrail
-pnpm install --config.strict-dep-builds=false   # flag: pnpm otherwise stops on esbuild's ignored build script
+pnpm install
 cp .env.example .env.local                      # optional keys, see below
 
 pnpm dev                             # dev: http://localhost:5173 (API on :3001)
@@ -178,21 +164,28 @@ Add `?demo=1` to any URL to replay a recorded run (no keys, no network).
 | `TOKEN_FACTORY_API_KEY` | embeddings, planner, LLM read, chat |
 | `TAVILY_API_KEY` | web search |
 | `OPENALEX_API_KEY`, `OPENALEX_MAILTO` | own OpenAlex budget (without it, a shared per-IP daily budget; once spent, Authors, Venue and Citations go unscored until midnight UTC) |
-| `SERPAPI_KEY` | Google Scholar |
+| `SERPAPI_KEY` | Google Scholar through SerpAPI, for API callers only: the UI never sends `scholar`, but `POST /api/library` uses it when `sources` includes it or is left out |
 
-Check: `curl localhost:3001/api/health` shows which keys are loaded; `pnpm exec tsx scripts/smoke-models.ts` tests them.
+Check: `curl localhost:3001/api/health` lists the models and whether the Token Factory, Tavily and OpenAlex keys are set (true or false, never the values); `pnpm exec tsx scripts/smoke-models.ts` tests them.
 
-**First library:** type a question, add papers you trust in the **Library** tab (DOI, PMID, arXiv/OpenAlex id, or .bib/.ris/CSV/PDF; the Graph score needs them), then **Build library**.
+**First library:** type a question, add papers you trust in the **Library** tab (DOI, PMID, arXiv/OpenAlex id, or a .bib, .ris, CSL JSON, CSV, plain text or PDF file; the Graph score needs them), then **Build library**.
 
 **Files** (git-ignored): `workspace/` holds questions, notes and libraries; `data/` holds the API cache and SQLite; `logs/runs/<id>/` holds per-run traces (check them first when a score is missing).
 
-`pnpm gate` = typecheck + tests + build. Nebius Serverless deploy: `scripts/deploy.sh` (ready, not run).
+`pnpm gate` = typecheck + tests + build.
 
-## Awards
+## Contributing
 
-| Award | Event | Track | Date |
-|---|---|---|---|
-| 🏆 **Hackathon winner** | Nebius & NVIDIA Hackathon | Healthcare & Life Sciences · Research Paper Discovery | 2026-10-18 |
+Contributions are welcome, and you need no API keys: tests and demo mode run offline. Start with
+[CONTRIBUTING.md](CONTRIBUTING.md), which explains how to pick work, open a pull request and what CI checks.
+
+- Look for [good first issues](https://github.com/Joevonlong/PaperTrail/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22).
+- Ideas and questions go to [Discussions](https://github.com/Joevonlong/PaperTrail/discussions).
+- Security reports go through [SECURITY.md](SECURITY.md), never a public issue.
+
+Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md). Project roles and decisions:
+[GOVERNANCE.md](GOVERNANCE.md), [MAINTAINERS.md](MAINTAINERS.md), [ROADMAP.md](ROADMAP.md),
+[CHANGELOG.md](CHANGELOG.md).
 
 ## Authors
 
@@ -203,6 +196,17 @@ Check: `curl localhost:3001/api/health` shows which keys are loaded; `pnpm exec 
     <td align="center"><a href="https://github.com/Lumberj3ck"><img src="https://github.com/Lumberj3ck.png?size=100" width="80" alt="Lumberj3ck"><br><sub><b>@Lumberj3ck</b></sub></a></td>
   </tr>
 </table>
+
+## Cite
+
+If you use PaperTrail in research, please cite it. [CITATION.cff](CITATION.cff) holds the metadata; GitHub's
+"Cite this repository" button turns it into APA or BibTeX.
+
+## Acknowledgements
+
+The Markdown editor, file manager and graph view build on code from [Zettlr](https://github.com/Zettlr/Zettlr)
+by Hendrik Erz and the Zettlr contributors (GPL-3.0). See [docs/third-party.md](docs/third-party.md) for the files
+and the data sources PaperTrail uses.
 
 ## License
 

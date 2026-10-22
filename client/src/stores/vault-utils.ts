@@ -1,4 +1,4 @@
-// Shared note helpers (captain-owned). Used by workspace (B) and discover/graph (C).
+// Shared note helpers. Used by the workspace and by discover/graph.
 import type { Note } from './vault'
 
 /** Targets of [[wikilinks]] in a note body, without alias part: [[Target|alias]] -> "Target". */

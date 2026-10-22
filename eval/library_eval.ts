@@ -1,4 +1,4 @@
-// Library-mode hold-out eval (same spirit as eval/holdout.py, docs/RANKING_AND_STORAGE.md §1).
+// Library-mode hold-out eval (same spirit as eval/holdout.py; results in eval/RESULTS_SEED_PIPELINE.md).
 // For each real review: keep 5 of its references as the vault (seed notes with DOIs + a Question note = review title),
 // hide the rest, run the real Library pipeline (POST /api/library), and count how many hidden references come back.
 // Baselines: PubMed esearch (relevance) and OpenAlex search with the review title, top 30.

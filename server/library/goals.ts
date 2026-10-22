@@ -1,4 +1,4 @@
-// Owner: lane L2. Goals agent (spec §1): notes → known paper ids (regex) + one planner call → Goals.
+// Goals agent (docs/features/library-build.md): notes → known paper ids (regex) + one planner call → Goals.
 // Deterministic fallback without a key (or on planner failure): question note, headings, TF-IDF keywords.
 import { z } from 'zod'
 import { Goals, type VaultNote } from '@shared/library'
@@ -7,7 +7,7 @@ import { chatJson, hasKey } from '../ai/http'
 import { verifyQuote } from '../ai/verify'
 
 // ---------- known paper ids ----------
-// Output format (shared with L1): DOI "10.xxxx/…" (lowercase), "pmid:<n>", "arxiv:<id>", OpenAlex "W<n>".
+// Output format (shared with the search sources): DOI "10.xxxx/…" (lowercase), "pmid:<n>", "arxiv:<id>", OpenAlex "W<n>".
 const DOI_RE = /\b(10\.\d{4,9}\/[^\s"'`<>\]\[(){}|,;]+)/gi
 const PMID_RE = /(?:\bPMID\s*:?\s*|pubmed\.ncbi\.nlm\.nih\.gov\/)(\d{5,9})\b/gi
 const ARXIV_RE = /(?:\barXiv\s*:?\s*|arxiv\.org\/(?:abs|pdf)\/)(\d{4}\.\d{4,5})(?:v\d+)?/gi

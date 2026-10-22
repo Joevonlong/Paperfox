@@ -1,4 +1,4 @@
-// Deterministic quote verification: is the judge's quote really in the abstract? (spec §2.1 `verified`)
+// Deterministic quote verification: is the judge's quote really in the abstract? (the `verified` flag; docs/features/seed-discovery.md)
 
 export interface QuoteMatch {
   verified: boolean

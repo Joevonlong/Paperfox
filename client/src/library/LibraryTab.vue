@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Editor-area view for 'preview' tabs whose ref starts with 'lib:' (lane L3): 'lib:results' or 'lib:paper:<id>'.
+// Editor-area view for 'preview' tabs whose ref starts with 'lib:': 'lib:results' or 'lib:paper:<id>'.
 import LibraryResults from './LibraryResults.vue'
 import LibPaperView from './LibPaperView.vue'
 defineProps<{ refId: string }>()

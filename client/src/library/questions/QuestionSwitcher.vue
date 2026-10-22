@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Lane W2 (D-33): research question switcher — select, New question (name + text), rename, delete with an in-app confirm.
+// D-33: research question switcher — select, New question (name + text), rename, delete with an in-app confirm.
 import { computed, nextTick, ref } from 'vue'
 import { useVault, nameFromQuestion } from '../../stores/vault'
 import { useLibrary } from '../../stores/library'

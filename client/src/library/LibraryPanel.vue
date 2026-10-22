@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Library sidebar (lanes L3, U1, W2; D-20/D-23/D-33/D-35/D-36): research question switcher, question box + Build (F-51),
+// Library sidebar (D-20/D-23/D-33/D-35/D-36): research question switcher, question box + Build (F-51),
 // seeds of the current question (F-62), History (F-61), pass rule (F-49), controls, stage trail, goals, sources, top results.
 import { computed, ref, watch } from 'vue'
 import { SourceName } from '@shared/library'

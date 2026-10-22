@@ -1,4 +1,4 @@
-// Owner: lane A1. The discovery run: resolve → R1..R5 → lanes → embed → rerank → judge → verify → order.
+// The discovery run: resolve → R1..R5 → lanes → embed → rerank → judge → verify → order.
 // Every stage emits start/done (or skipped/error) with counts and ms; one failing route never kills the run.
 import { Judgement as JudgementSchema, LANE_ORDER, type Candidate, type Facet, type Lane, type Paper, type RouteId, type Seed, type Signal } from '@shared/contracts'
 import type { RunConfig } from '@shared/config'

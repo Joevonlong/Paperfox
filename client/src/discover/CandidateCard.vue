@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// One candidate row in a lane. Owner: lane C.
+// One candidate row in a lane.
 import { computed } from 'vue'
 import type { Candidate } from '@shared/contracts'
 import { useUi } from '../stores/ui'

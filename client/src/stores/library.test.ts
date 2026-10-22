@@ -6,7 +6,13 @@ import { useLibrary } from './library'
 import { useVault, questionNote } from './vault'
 import { buildMockLibrary } from '../library/mock'
 
-describe('library store (chat API for lane U2)', () => {
+// Node has no IndexedDB. Keep the vault's debounced saves in memory so a save that fires after a test cannot throw.
+vi.mock('idb-keyval', () => {
+  const store = new Map<string, unknown>()
+  return { get: async (k: string) => store.get(k), set: async (k: string, v: unknown) => { store.set(k, v) } }
+})
+
+describe('library store (chat API)', () => {
   beforeEach(() => setActivePinia(createPinia()))
 
   it('applyProposal merges settings, re-scores in the browser and returns top-10 before/after', () => {

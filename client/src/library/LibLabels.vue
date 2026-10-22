@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Label chips for a library paper (lane L3): kind, study design, peer review, OA, field, recency, tags, found-by.
+// Label chips for a library paper: kind, study design, peer review, OA, field, recency, tags, found-by.
 import { computed } from 'vue'
 import type { LibPaper } from '@shared/library'
 import { SOURCE_LABEL } from '../stores/library'

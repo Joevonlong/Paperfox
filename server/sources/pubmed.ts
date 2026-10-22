@@ -1,4 +1,4 @@
-// Owner: lane A1. NCBI E-utilities: efetch abstracts (XML → text) and elink pubmed_pubmed neighbours (R3).
+// NCBI E-utilities: efetch abstracts (XML → text) and elink pubmed_pubmed neighbours (R3).
 // Throttled to ≤3 req/s by the 'pubmed' gate in server/data/http.ts; cached like every other GET.
 import { cachedGet, mapLimit } from '../data/http'
 

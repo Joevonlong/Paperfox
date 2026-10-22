@@ -1,4 +1,4 @@
-// Owner: lane A1. Every OpenAlex / PubMed GET goes through here: raw cache (gzip under
+// Every OpenAlex / PubMed GET goes through here: raw cache (gzip under
 // ${DATA_DIR}/raw/<api>/<sha256(url)>.json.gz), retry with backoff on 429/5xx, per-API concurrency/throttle.
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -88,7 +88,7 @@ export async function cachedGet(api: keyof typeof gates | string, url: string, o
       // re-checked inside the gate: requests queued before the breaker opened must not go out either
       const res = await gate.run(() => {
         if (isBlocked(api)) throw new HttpError(429, key, `${api} budget exhausted — circuit open until ${new Date(blockedUntil[api]).toISOString()}`)
-        return fetch(url, { signal: AbortSignal.timeout(opts.timeoutMs ?? 30000), headers: { 'user-agent': 'PaperTrail/0.1 (hackathon)' } })
+        return fetch(url, { signal: AbortSignal.timeout(opts.timeoutMs ?? 30000), headers: { 'user-agent': 'PaperTrail/0.1' } })
       })
       const body = await res.text()
       trace('api', { api, url: key, cached: false, status: res.status, ms: Date.now() - t0, bytes: body.length, attempt, raw: res.ok ? `data/raw/${api}/${hash}.json.gz` : undefined, error: res.ok ? undefined : body.slice(0, 200) })

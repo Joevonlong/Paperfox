@@ -1,4 +1,4 @@
-// Owner: lane L2. Deterministic labels from an EnrichedRecord (spec §4). Pure functions.
+// Deterministic labels from an EnrichedRecord (docs/features/library-build.md). Pure functions.
 import type { Goals, Labels, SourceName } from '@shared/library'
 import type { EnrichedRecord } from './types'
 

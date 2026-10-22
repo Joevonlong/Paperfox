@@ -1,4 +1,4 @@
-// Owner: lane L2. Quality score (spec §5): six components, each with `how` + evidence lines with source links.
+// Quality score (docs/features/quality-score.md): six components, each with `how` + evidence lines with source links.
 // Pure functions: no I/O. Every percentile is computed within the current library and says "of N".
 import type { z } from 'zod'
 import type { Evidence, Goals, Labels, LibPaper, LlmRead, ScoreComponent, Weights } from '@shared/library'

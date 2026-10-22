@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // F-47 / D-25 "verdict first": total + letter grade, one plain sentence, chips for the top 2 strengths and the main
-// weakness, and the passed / below badge (lane U1). Replaces the six-colour stacked bar.
+// weakness, and the passed / below badge. Replaces the six-colour stacked bar.
 import { computed } from 'vue'
 import type { LibPaper } from '@shared/library'
 import { COMPONENT_META, f2, grade, keyNumber, verdict } from './score'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// A number that counts up to its new value in <= 300 ms (instant with prefers-reduced-motion). Owner: lane C.
+// A number that counts up to its new value in <= 300 ms (instant with prefers-reduced-motion).
 import { onBeforeUnmount, ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{ value: number; ms?: number }>(), { ms: 300 })

@@ -1,10 +1,10 @@
-// Dev mock of the Library stream (lane L3). Dev builds only, with ?mock=1 (never a fallback, R-3.1).
-// Papers are real OpenAlex records from docs/data/melanoma-multi-seed-citers.json (494 papers citing ≥2 seeds) and
-// docs/data/melanoma-lanes-snapshot.json. Citation counts, venues, authors and seed links are real; every value the
+// Dev mock of the Library stream. Dev builds only, with ?mock=1 (never a fallback, R-3.1).
+// Papers are real OpenAlex records from server/demo/fixtures/melanoma-multi-seed-citers.json (494 papers citing ≥2 seeds) and
+// server/demo/fixtures/melanoma-lanes-snapshot.json. Citation counts, venues, authors and seed links are real; every value the
 // fixture does not hold (venue/author h-index, embeddings, LLM grades) is replaced by a rule computed within this
 // pile and labeled "mock" in its `how` and evidence lines. Goals quote the user's own notes verbatim.
-import citers from '../../../docs/data/melanoma-multi-seed-citers.json'
-import snapshot from '../../../docs/data/melanoma-lanes-snapshot.json'
+import citers from '../../../server/demo/fixtures/melanoma-multi-seed-citers.json'
+import snapshot from '../../../server/demo/fixtures/melanoma-lanes-snapshot.json'
 import type { Paper, Seed } from '@shared/contracts'
 import type { Goals, Hit, LibPaper, LibraryEvent, LibraryRequest, ScoreComponent, SourceName, VaultNote, Labels } from '@shared/library'
 import { combine, rescore } from './score'

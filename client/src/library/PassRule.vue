@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// F-49 / D-27 pass rule controls (lane U1): "Pass: top X% of this library" + "Minimum score"; passed = rank within the
+// F-49 / D-27 pass rule controls: "Pass: top X% of this library" + "Minimum score"; passed = rank within the
 // top X% of the scored, non-excluded papers AND total ≥ the minimum. Re-computed in the browser; shows "N of M pass".
 import { computed } from 'vue'
 import { useLibrary } from '../stores/library'
