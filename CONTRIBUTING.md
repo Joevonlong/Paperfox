@@ -89,6 +89,7 @@ at the lines and files the PR adds or changes. It blocks:
 | Files larger than 5 MB | They bloat every clone forever. |
 | `pull_request_target` in any workflow except `.github/workflows/label-pr.yml` | That trigger runs with write permissions; only the labeler, which never checks out PR code, may use it. |
 | `.github/CODEOWNERS` and `MAINTAINERS.md` listing different GitHub logins | `MAINTAINERS.md` is the one list of maintainers; CODEOWNERS must match it. |
+| Changes to `CHANGELOG.md` or `docs/media/` outside a `release/*` branch of this repository | Maintainers write them when they cut a release. |
 
 CI also scans the commits for secrets with gitleaks. Run the same checks locally:
 
@@ -112,6 +113,8 @@ automatically from the paths they touch ([`.github/labeler.yml`](.github/labeler
 - `needs-eval`: the PR touches search, scoring or model code. A maintainer runs the ranking evaluation.
 - `contract-change`: the PR touches `shared/`, the container, workflows or `package.json`. Reviewers check
   compatibility (see [Versioning](#versioning)).
+
+The weekly triage workflow adds `stale` to `status: needs-info` items that got no reply (see Response times).
 
 ## Response times
 

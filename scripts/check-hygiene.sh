@@ -5,6 +5,8 @@
 #   scripts/check-hygiene.sh                     scan every tracked file
 #   scripts/check-hygiene.sh --range <git-range> scan only what <git-range> adds,
 #                                                e.g. --range origin/main...HEAD
+#   ... --range <git-range> --branch <name>      name of the branch being checked (rule 6);
+#                                                default $GITHUB_HEAD_REF, then the current branch
 #
 # Rules:
 #   1. Absolute local paths in file contents: /Users/<name>, /Volumes/<name>,
@@ -13,6 +15,12 @@
 #   3. SQLite databases: *.sqlite, *.sqlite3, *.sqlite-wal, ...
 #   4. Files larger than 5 MB.
 #   5. pull_request_target in any workflow except .github/workflows/label-pr.yml.
+#   6. (--range only) CHANGELOG.md and docs/media/** change only on release/* branches of
+#      this repository. CHANGELOG.md counts only if it already existed at the base of the
+#      range, so the pull request that adds it passes. CI passes a fork's branch name with
+#      a "fork:" prefix, so a fork branch called release/... does not qualify.
+#   7. .github/CODEOWNERS and MAINTAINERS.md name different GitHub logins
+#      (--range: only when the range touches either file).
 # Secret scanning is done separately by gitleaks in CI.
 #
 # --range mode only looks at lines and files the range adds or changes, so
@@ -32,25 +40,37 @@ readonly PRT_WORD='pull_request''_target'
 # Print paths verbatim (no quoting of non-ASCII names), whatever the user's git config.
 readonly GIT_OPTS=(-c core.quotePath=false -c diff.noprefix=false -c diff.mnemonicPrefix=false)
 
+usage() {
+  echo "usage: $0 [--range <git-range> [--branch <name>]]" >&2
+  exit 2
+}
+
 range=''
-case "${1:-}" in
-  '') ;;
-  --range)
-    range="${2:-}"
-    if [[ -z "$range" || $# -ne 2 ]]; then
-      echo "usage: $0 [--range <git-range>]" >&2
-      exit 2
-    fi
-    ;;
-  -h | --help)
-    awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"
-    exit 0
-    ;;
-  *)
-    echo "usage: $0 [--range <git-range>]" >&2
-    exit 2
-    ;;
-esac
+branch=''
+branch_set=0
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --range)
+      range="${2:-}"
+      [[ -n "$range" ]] || usage
+      shift 2
+      ;;
+    --branch)
+      [[ $# -ge 2 ]] || usage
+      branch="$2"
+      branch_set=1
+      shift 2
+      ;;
+    -h | --help)
+      awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"
+      exit 0
+      ;;
+    *) usage ;;
+  esac
+done
+if ((branch_set)) && [[ -z "$range" ]]; then
+  usage
+fi
 
 cd "$(git rev-parse --show-toplevel)"
 
@@ -85,6 +105,49 @@ check_lines() {
     fi
   done
 }
+
+# ---- Rule 6: release-only paths ------------------------------------------------
+# CHANGELOG.md and docs/media/** are written by the release process (release/* branches).
+# Args: <range> <tip>. Uses $branch / $branch_set from the command line.
+readonly RELEASE_BRANCH_GLOB='release/*'
+check_release_only_paths() {
+  local range="$1" tip="$2" base left path renamed name
+  if ((!branch_set)); then
+    branch="${GITHUB_HEAD_REF:-}"
+    [[ -n "$branch" ]] || branch="$(git symbolic-ref --short -q HEAD || true)"
+  fi
+  # shellcheck disable=SC2053 # glob match on purpose
+  [[ "$branch" == $RELEASE_BRANCH_GLOB ]] && return 0
+
+  # Base of the range: the merge base for A...B, A for A..B.
+  if [[ "$range" == *...* ]]; then
+    left="${range%%...*}"
+    base="$(git merge-base "${left:-HEAD}" "$tip" 2> /dev/null)" || base=''
+  elif [[ "$range" == *..* ]]; then
+    left="${range%%..*}"
+    base="$(git rev-parse --verify --quiet "${left:-HEAD}^{commit}")" || base=''
+  else
+    base="$(git rev-parse --verify --quiet "$range^{commit}")" || base=''
+  fi
+
+  while IFS=$'\t' read -r _ path renamed; do
+    # Renames and copies list "old<TAB>new"; check both sides.
+    for name in "$path" ${renamed:+"$renamed"}; do
+      case "$name" in
+        CHANGELOG.md)
+          # Only an existing changelog is protected; adding it is allowed.
+          if [[ -z "$base" ]] || ! git cat-file -e "$base:CHANGELOG.md" 2> /dev/null; then
+            continue
+          fi
+          ;;
+        docs/media/*) ;;
+        *) continue ;;
+      esac
+      fail "'$name' changed on branch '${branch:-(unknown)}' (CHANGELOG.md and docs/media/** change only on release/* branches)"
+    done
+  done < <(git "${GIT_OPTS[@]}" diff --no-ext-diff --name-status "$range" -- CHANGELOG.md docs/media 2> /dev/null)
+}
+# ---- end of rule 6 ----------------------------------------------------------------
 
 human_size() {
   awk -v b="$1" 'BEGIN { printf "%.1f MB", b / 1048576 }'
@@ -131,6 +194,8 @@ if [[ -n "$range" ]]; then
       '
   )
 
+  check_release_only_paths "$range" "$tip"
+
   workflows="$(git ls-tree -r --name-only "$tip" -- .github/workflows)"
   while IFS= read -r wf; do
     [[ -n "$wf" && "$wf" != "$ALLOWED_PRT_WORKFLOW" ]] || continue
@@ -166,7 +231,7 @@ else
   done < <(git "${GIT_OPTS[@]}" grep -l "$PRT_WORD" -- .github/workflows || true)
 fi
 
-# --- Rule: CODEOWNERS matches MAINTAINERS.md ---------------------------------
+# ---- Rule 7: CODEOWNERS matches MAINTAINERS.md ---------------------------------
 # MAINTAINERS.md is the one list of maintainers; .github/CODEOWNERS must name
 # exactly the same GitHub logins (compared case-insensitively). --range mode
 # checks this only when the range touches either file; the no-argument mode
@@ -211,7 +276,7 @@ check_codeowners() {
   fi
 }
 check_codeowners
-# --- End rule: CODEOWNERS matches MAINTAINERS.md ------------------------------
+# ---- end of rule 7 ----------------------------------------------------------------
 
 if ((failures > 0)); then
   echo "hygiene: $failures problem(s) found" >&2

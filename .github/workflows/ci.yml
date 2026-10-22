@@ -70,9 +70,15 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
           if [ "$EVENT_NAME" = pull_request ]; then
-            bash scripts/check-hygiene.sh --range "origin/${BASE_REF}...HEAD"
+            # The branch name decides whether CHANGELOG.md and docs/media/** may change
+            # (release/* branches of this repository only); fork branches never qualify.
+            branch="$HEAD_REF"
+            if [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then branch="fork:$HEAD_REF"; fi
+            bash scripts/check-hygiene.sh --range "origin/${BASE_REF}...HEAD" --branch "$branch"
           else
             bash scripts/check-hygiene.sh
           fi

@@ -102,9 +102,23 @@ Search and ranking changes can move results in ways unit tests do not catch. The
 1. **Offline tests** (`pnpm test`). This is all contributors run. Offline re-scoring fixtures are planned, so that
    score regressions show up here too.
 2. **Hold-out evaluation** (`eval/library_eval.ts`, results in `eval/RESULTS_LIBRARY.md`). It calls live APIs, needs
-   keys and spends API budget. Maintainers run it for PRs labelled `needs-eval`. Do not run it yourself.
+   keys and spends API budget. Maintainers run it for PRs labelled `needs-eval` through the `eval` workflow
+   ([`.github/workflows/eval.yml`](../.github/workflows/eval.yml)), which evaluates one exact commit and names the run
+   `eval <commit>`. Do not run it yourself.
 3. **Release check.** If any `needs-eval` PR was merged, or the `ai` / `@ai-sdk/*` packages were upgraded since the
    last release, maintainers run the hold-out evaluation on the release commit before tagging.
 
 `pnpm exec tsx scripts/smoke-models.ts` and `scripts/smoke-e2e.ts` check live model keys. They are for key
 holders only.
+
+## Releases
+
+The lead cuts releases by pushing a `vX.Y.Z` tag. [`.github/workflows/release.yml`](../.github/workflows/release.yml)
+then builds the container image for amd64 and arm64, runs `scripts/release/smoke.sh` against each image, and
+publishes the image to GHCR and a GitHub Release whose notes come from `CHANGELOG.md`. To build the same image
+from source:
+
+```bash
+git checkout vX.Y.Z
+docker build -t papertrail:X.Y.Z .
+```

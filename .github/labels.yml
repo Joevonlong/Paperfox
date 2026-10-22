@@ -48,3 +48,8 @@
 - name: "contract-change"
   color: "e99695"
   description: "Touches shared contracts, the container, workflows or package.json"
+
+# Automation: applied by .github/workflows/triage.yml.
+- name: "stale"
+  color: "ededed"
+  description: "No reply to a needs-info request for 30 days; closed 7 days later"
