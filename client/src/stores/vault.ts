@@ -178,7 +178,9 @@ export const useVault = defineStore('vault', {
     persist() {
       clearTimeout(saveTimer)
       saveTimer = setTimeout(() => {
-        set(DB_KEY, JSON.parse(JSON.stringify(this.notes))).catch(() => { this.error = 'Saving to IndexedDB failed.' })
+        const failed = () => { this.error = 'Saving to IndexedDB failed.' }
+        // set() throws synchronously when IndexedDB does not exist at all (old browsers, Node), so catch both ways.
+        try { set(DB_KEY, JSON.parse(JSON.stringify(this.notes))).catch(failed) } catch { failed() }
       }, 150)
     },
     setCurrent(id: string | null) { this.current = id; lsSet(CURRENT_KEY, id) },

@@ -3,7 +3,7 @@
 Read first: `docs/PRODUCT_PLAN.md` (decisions D-01…D-16, board), `docs/RANKING_AND_STORAGE.md` (ranking, ingestion, storage spec), `shared/contracts.ts` (the API and data contracts — do not change without the captain).
 
 ## Stack
-Vite + Vue 3 + Pinia + CodeMirror 6 + d3 (client/) · Hono on Node 22 (server/) · zod contracts (shared/) · AI SDK → Nebius Token Factory · SQLite (better-sqlite3) · pnpm · TypeScript 5.9. Repo license GPL-3.0 (we copy Zettlr code from /Users/unclejoe/Develop_Workspace/Zettlr).
+Vite + Vue 3 + Pinia + CodeMirror 6 + d3 (client/) · Hono on Node 22 (server/) · zod contracts (shared/) · AI SDK → Nebius Token Factory · SQLite (better-sqlite3) · pnpm · TypeScript 5.9. Repo license GPL-3.0 (includes code derived from Zettlr, https://github.com/Zettlr/Zettlr).
 
 ## Ownership (only edit your own paths; ask the captain for anything else)
 | Lane | Paths |

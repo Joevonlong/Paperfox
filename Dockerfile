@@ -3,9 +3,11 @@ FROM node:22-slim AS build
 WORKDIR /app
 # better-sqlite3 compiles a native module when no prebuilt binary matches
 RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
-    && rm -rf /var/lib/apt/lists/* \
-    && corepack enable && corepack prepare pnpm@9.12.3 --activate
-COPY package.json pnpm-lock.yaml ./
+    && rm -rf /var/lib/apt/lists/*
+# pnpm version (and checksum) come from "packageManager" in package.json
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable pnpm && corepack install
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build
