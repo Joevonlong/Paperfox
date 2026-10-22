@@ -1,4 +1,4 @@
-# Contributing to PaperTrail
+# Contributing to Paperfox
 
 Thanks for your interest. You do not need API keys to contribute: the app, the tests and `?demo=1` all run without
 them. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
@@ -7,10 +7,10 @@ them. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.m
 
 | You want to | Go to |
 |---|---|
-| Report a bug | [New issue → Bug report](https://github.com/Joevonlong/PaperTrail/issues/new/choose) |
-| Suggest a feature or a bigger change | [Discussions › Ideas](https://github.com/Joevonlong/PaperTrail/discussions/categories/ideas) |
-| Ask a question | [Discussions › Q&A](https://github.com/Joevonlong/PaperTrail/discussions/categories/q-a) |
-| Report a vulnerability | [Private vulnerability report](https://github.com/Joevonlong/PaperTrail/security/advisories/new), never a public issue (see [SECURITY.md](SECURITY.md)) |
+| Report a bug | [New issue → Bug report](https://github.com/Joevonlong/Paperfox/issues/new/choose) |
+| Suggest a feature or a bigger change | [Discussions › Ideas](https://github.com/Joevonlong/Paperfox/discussions/categories/ideas) |
+| Ask a question | [Discussions › Q&A](https://github.com/Joevonlong/Paperfox/discussions/categories/q-a) |
+| Report a vulnerability | [Private vulnerability report](https://github.com/Joevonlong/Paperfox/security/advisories/new), never a public issue (see [SECURITY.md](SECURITY.md)) |
 | Fix a bug, improve docs, add a search source | Read on, then open a pull request |
 
 Issues are for bugs and for tasks that maintainers have accepted. There is no feature-request form: ideas start in
@@ -23,12 +23,12 @@ Discussions, and a maintainer opens an issue once an idea is accepted.
 | Fix a typo, improve docs, or fix a small bug with a test | Open a PR directly. No issue needed. |
 | Add a search source following [docs/adding-a-source.md](docs/adding-a-source.md) | Open a PR directly. No issue needed. A maintainer decides whether it is enabled by default. |
 | Work on an issue labelled `status: ready` that nobody is assigned to | Comment on the issue with your approach. A maintainer assigns you (target: within 2 working days). You may open a draft PR before that, but the assignee's PR takes precedence. |
-| Propose an idea or a larger feature | Start a thread in [Discussions › Ideas](https://github.com/Joevonlong/PaperTrail/discussions/categories/ideas). Once a maintainer accepts it, they open an issue. |
+| Propose an idea or a larger feature | Start a thread in [Discussions › Ideas](https://github.com/Joevonlong/Paperfox/discussions/categories/ideas). Once a maintainer accepts it, they open an issue. |
 | Work on an issue already assigned to someone else | Please don't. Pick another issue or ask in the issue whether help is wanted. |
 
 Good starting points: issues labelled
-[`good first issue`](https://github.com/Joevonlong/PaperTrail/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
-or [`help wanted`](https://github.com/Joevonlong/PaperTrail/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22help%20wanted%22).
+[`good first issue`](https://github.com/Joevonlong/Paperfox/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
+or [`help wanted`](https://github.com/Joevonlong/Paperfox/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22help%20wanted%22).
 
 Assignment rules:
 
@@ -99,7 +99,7 @@ bash scripts/check-hygiene.sh --range upstream/main...HEAD   # only what your br
 ```
 
 On a fork, add the main repository as `upstream` once:
-`git remote add upstream https://github.com/Joevonlong/PaperTrail.git && git fetch upstream`. Run `git fetch upstream`
+`git remote add upstream https://github.com/Joevonlong/Paperfox.git && git fetch upstream`. Run `git fetch upstream`
 again before the check so `upstream/main` is current.
 
 If you committed something by mistake, remove it in a new commit. A leaked key must be revoked, not just deleted.
@@ -131,7 +131,7 @@ If a PR has had no response for 7 days, mention one of the people in [MAINTAINER
 
 ## Versioning
 
-PaperTrail uses `0.MINOR.PATCH` until 1.0. A release that includes a `feat` or a breaking change (`!`) bumps MINOR;
+Paperfox uses `0.MINOR.PATCH` until 1.0. A release that includes a `feat` or a breaking change (`!`) bumps MINOR;
 a release with only fixes bumps PATCH.
 
 **Breaking** means any of:
@@ -150,7 +150,7 @@ a new optional environment variable.
 
 ## License
 
-PaperTrail is licensed under [GPL-3.0-or-later](LICENSE). Contributions are accepted under the same license
+Paperfox is licensed under [GPL-3.0-or-later](LICENSE). Contributions are accepted under the same license
 (inbound = outbound): by opening a pull request you agree that your contribution is licensed under
 GPL-3.0-or-later. There is no CLA and no sign-off requirement. You keep the copyright on your work. Only submit
 code you have the right to contribute.

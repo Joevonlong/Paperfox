@@ -1,6 +1,6 @@
-# PaperTrail: notes for coding agents
+# Paperfox: notes for coding agents
 
-PaperTrail starts from a research question and the papers a researcher already trusts, and builds a graded library of
+Paperfox starts from a research question and the papers a researcher already trusts, and builds a graded library of
 related papers with the evidence behind every score. The repo has three parts:
 
 - `client/`: Vue 3, Pinia, CodeMirror 6 and d3, in a Zettlr-style Markdown workspace.

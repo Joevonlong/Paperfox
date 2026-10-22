@@ -11,7 +11,7 @@ const EU = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils'
 export function euUrl(tool: string, params: Record<string, string | number>): string {
   const u = new URL(`${EU}/${tool}.fcgi`)
   for (const [k, v] of Object.entries(params)) u.searchParams.set(k, String(v))
-  u.searchParams.set('tool', 'papertrail')
+  u.searchParams.set('tool', 'paperfox')
   if (process.env.OPENALEX_MAILTO) u.searchParams.set('email', process.env.OPENALEX_MAILTO)
   if (process.env.NCBI_API_KEY) u.searchParams.set('api_key', process.env.NCBI_API_KEY)
   return u.toString()

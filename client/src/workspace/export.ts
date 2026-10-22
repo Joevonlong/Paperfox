@@ -114,11 +114,11 @@ export function questionScope(notes: Note[], question: string | null, libraryPap
 
 export type ExportFormat = 'bib' | 'csl' | 'zip'
 export interface ExportFile { name: string; data: Blob | string; type: string }
-const safeFile = (s: string) => s.replace(/[\\/:*?"<>|#^[\]]/g, '-').replace(/\s+/g, ' ').trim().slice(0, 80) || 'papertrail'
+const safeFile = (s: string) => s.replace(/[\\/:*?"<>|#^[\]]/g, '-').replace(/\s+/g, ' ').trim().slice(0, 80) || 'paperfox'
 
 /** The file one export button produces for a question (named after the question folder). */
 export function exportFile(format: ExportFormat, notes: Note[], question: string | null): ExportFile {
-  const base = safeFile(question || 'papertrail')
+  const base = safeFile(question || 'paperfox')
   if (format === 'bib') return { name: `${base}.bib`, data: toBibTeX(bibliography(notes)), type: 'application/x-bibtex' }
   if (format === 'csl') return { name: `${base}.csl.json`, data: toCslJson(bibliography(notes)), type: 'application/json' }
   const prefix = question ? `Questions/${question}/` : ''

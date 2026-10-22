@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Smoke-test a PaperTrail container image before it is published.
+# Smoke-test a Paperfox container image before it is published.
 #
 # Usage:
 #   scripts/release/smoke.sh <image-ref> [--version X.Y.Z] [--previous <image-ref>]
 #
-#   <image-ref>   image to test, e.g. ghcr.io/owner/papertrail@sha256:... or papertrail:local
+#   <image-ref>   image to test, e.g. ghcr.io/owner/paperfox@sha256:... or paperfox:local
 #   --version     version /api/health must report (default: "version" in package.json)
 #   --previous    an older release image; adds the upgrade check (data written by the
 #                 previous image must be readable by <image-ref>)
@@ -16,7 +16,7 @@
 #   license        /app/LICENSE exists in the image
 #   persist.*      with a volume at /data: create a question and write a note through the
 #                  API, replace the container, read the note back unchanged
-#   demo-only.*    with PAPERTRAIL_DEMO_ONLY=1: /api/health reports demoOnly: true,
+#   demo-only.*    with PAPERFOX_DEMO_ONLY=1: /api/health reports demoOnly: true,
 #                  /api/health, /api/demo/* and the client stay reachable, every live
 #                  endpoint returns 403
 #   upgrade.*      (--previous only) the same round trip, written by the previous image
@@ -144,7 +144,7 @@ round_trip() {
   local check="$1" writer="$2" reader="$3" vol base q marker msg
   vol="$(new_volume "$check")"
   q="smoke-$RANDOM$RANDOM"
-  marker="papertrail-smoke-$run_id-$check"
+  marker="paperfox-smoke-$run_id-$check"
   if ! base="$(start "$check-1" "$writer" -v "$vol:/data")"; then
     fail "$check.write" "container did not start ($writer)"
     return
@@ -195,7 +195,7 @@ fi
 round_trip persist "$image" "$image"
 
 # --- demo-only mode --------------------------------------------------------------
-if base="$(start demo "$image" -e PAPERTRAIL_DEMO_ONLY=1)"; then
+if base="$(start demo "$image" -e PAPERFOX_DEMO_ONLY=1)"; then
   http GET "$base/api/health"
   if json_has "$body" '"demoOnly":true'; then pass demo-only.health; else fail demo-only.health "no demoOnly: true in /api/health"; fi
   http GET "$base/api/demo/snapshot"
@@ -216,7 +216,7 @@ if base="$(start demo "$image" -e PAPERTRAIL_DEMO_ONLY=1)"; then
   done
   stop demo
 else
-  fail demo-only.start "container did not start with PAPERTRAIL_DEMO_ONLY=1"
+  fail demo-only.start "container did not start with PAPERFOX_DEMO_ONLY=1"
 fi
 
 # --- upgrade ----------------------------------------------------------------------

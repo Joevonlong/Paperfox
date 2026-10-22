@@ -21,5 +21,5 @@ if (existsSync('./dist/client')) {
 }
 
 serve({ fetch: app.fetch, port: env.port, hostname: '0.0.0.0' }, info => {
-  console.log(`PaperTrail server on http://localhost:${info.port}`)
+  console.log(`Paperfox server on http://localhost:${info.port}`)
 })

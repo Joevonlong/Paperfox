@@ -164,7 +164,7 @@ function hideFormattingCharacters (view: EditorView): RangeSet<Decoration> {
               break // We only do this with bullet lists
             }
             const marks = node.node.getChildren('ListMark')
-            // PaperTrail: task items show only their checkbox, not a bullet as well.
+            // Paperfox: task items show only their checkbox, not a bullet as well.
             if (node.node.getChild('Task')) {
               for (const mark of marks) ranges.push(hiddenDeco.range(mark.from, Math.min(mark.to + 1, node.to)))
               break

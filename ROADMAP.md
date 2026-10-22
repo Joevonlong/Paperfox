@@ -1,8 +1,8 @@
 # Roadmap
 
 Themes, not promises: there are no dates. Concrete tasks live in
-[issues and milestones](https://github.com/Joevonlong/PaperTrail/milestones). Ideas go to
-[Discussions › Ideas](https://github.com/Joevonlong/PaperTrail/discussions/categories/ideas).
+[issues and milestones](https://github.com/Joevonlong/Paperfox/milestones). Ideas go to
+[Discussions › Ideas](https://github.com/Joevonlong/Paperfox/discussions/categories/ideas).
 
 ## Now: v0.2.0, the first public release
 

@@ -35,7 +35,7 @@ Code: `server/discovery/`, `server/ai/`, `server/sources/`. Contracts: `shared/c
   percentile + 0.05·impact. Unjudged papers follow, by links and then citations; Bridges use the PubMed rank instead.
   Near-duplicates (cosine above 0.92) are pushed down.
 - "Why ranked here" is built from features only. It is never LLM text.
-- Papers, runs and embeddings are cached in SQLite (`${DATA_DIR}/papertrail.sqlite`, `server/data/repo.ts`).
+- Papers, runs and embeddings are cached in SQLite (`${DATA_DIR}/paperfox.sqlite`, `server/data/repo.ts`).
 
 ## Invariants
 

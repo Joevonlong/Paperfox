@@ -10,7 +10,7 @@ def oa(params):
     params=dict(params); params['mailto']=M
     return get("https://api.openalex.org/works?"+urllib.parse.urlencode(params))
 def eu(tool,params):
-    params=dict(params); params.update({'tool':'papertrail','email':M,'retmode':'json'})
+    params=dict(params); params.update({'tool':'paperfox','email':M,'retmode':'json'})
     time.sleep(0.4); return get(f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/{tool}.fcgi?"+urllib.parse.urlencode(params))
 short=lambda x:x.split('/')[-1]
 def batch(ids,select,key='openalex_id'):

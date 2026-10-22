@@ -1,6 +1,6 @@
 # Governance
 
-PaperTrail lives in a personal GitHub account. [MAINTAINERS.md](MAINTAINERS.md) is the one list of who holds which
+Paperfox lives in a personal GitHub account. [MAINTAINERS.md](MAINTAINERS.md) is the one list of who holds which
 role; no other file names people, except `.github/CODEOWNERS`, which must list the same logins (CI checks this).
 
 ## Roles

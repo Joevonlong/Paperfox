@@ -58,7 +58,7 @@ See the `ATOM` constant used by the arXiv tests. Tests must not touch the networ
 ## 5. Document it
 
 - If the source has a key or other setting, add it to `.env.example` as an optional variable, commented as optional.
-- Add a line to [third-party.md](third-party.md) with the data source's terms of use and what PaperTrail stores from it.
+- Add a line to [third-party.md](third-party.md) with the data source's terms of use and what Paperfox stores from it.
 - Add the source to the list under **Search** in [features/library-build.md](features/library-build.md): results
   per query, rate limits, and the key it is skipped without.
 - Do not edit the source table in the README. A maintainer updates it when they cut the release that ships the

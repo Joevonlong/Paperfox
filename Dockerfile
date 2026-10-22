@@ -1,4 +1,4 @@
-# PaperTrail: one container serving the Hono API and the built Vue client (Nebius Serverless Endpoint, linux/amd64).
+# Paperfox: one container serving the Hono API and the built Vue client (Nebius Serverless Endpoint, linux/amd64).
 FROM node:22-slim AS build
 WORKDIR /app
 # better-sqlite3 compiles a native module when no prebuilt binary matches

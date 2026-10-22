@@ -1,4 +1,4 @@
-<h1 align="center">PaperTrail</h1>
+<h1 align="center">Paperfox</h1>
 
 <p align="center"><b>Start from the papers you trust. Find the ones you missed, with receipts.</b></p>
 
@@ -13,16 +13,16 @@
 </p>
 
 <p align="center">
-  <img src="docs/media/hero.gif" width="900" alt="PaperTrail in demo mode: a research question is typed, Build library is clicked, graded paper tiles stream in, and the citation graph opens">
+  <img src="docs/media/hero.gif" width="900" alt="Paperfox in demo mode: a research question is typed, Build library is clicked, graded paper tiles stream in, and the citation graph opens">
 </p>
 <p align="center"><sub>Real app, demo mode (replay of a recorded real run, sped up 2x).</sub></p>
 
-Type a research question, add the papers you already trust, and PaperTrail builds a graded library of new papers, with the evidence behind every score.
+Type a research question, add the papers you already trust, and Paperfox builds a graded library of new papers, with the evidence behind every score.
 
 ## Quick start
 
 ```bash
-git clone https://github.com/Joevonlong/PaperTrail.git && cd PaperTrail
+git clone https://github.com/Joevonlong/Paperfox.git && cd Paperfox
 corepack enable pnpm   # Node 25+: run `npm i -g corepack` first
 pnpm install && pnpm build
 PORT=3030 pnpm start
@@ -146,7 +146,7 @@ Without keys, AI steps are skipped or fall back (for example, keyword overlap in
 Requires Node 22.13+, pnpm (`corepack enable pnpm`) and git. The full guide is [docs/development.md](docs/development.md).
 
 ```bash
-git clone https://github.com/Joevonlong/PaperTrail.git && cd PaperTrail
+git clone https://github.com/Joevonlong/Paperfox.git && cd Paperfox
 pnpm install
 cp .env.example .env.local                      # optional keys, see below
 
@@ -179,8 +179,8 @@ Check: `curl localhost:3001/api/health` lists the models and whether the Token F
 Contributions are welcome, and you need no API keys: tests and demo mode run offline. Start with
 [CONTRIBUTING.md](CONTRIBUTING.md), which explains how to pick work, open a pull request and what CI checks.
 
-- Look for [good first issues](https://github.com/Joevonlong/PaperTrail/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22).
-- Ideas and questions go to [Discussions](https://github.com/Joevonlong/PaperTrail/discussions).
+- Look for [good first issues](https://github.com/Joevonlong/Paperfox/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22).
+- Ideas and questions go to [Discussions](https://github.com/Joevonlong/Paperfox/discussions).
 - Security reports go through [SECURITY.md](SECURITY.md), never a public issue.
 
 Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md). Project roles and decisions:
@@ -199,15 +199,17 @@ Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md). Project 
 
 ## Cite
 
-If you use PaperTrail in research, please cite it. [CITATION.cff](CITATION.cff) holds the metadata; GitHub's
+If you use Paperfox in research, please cite it. [CITATION.cff](CITATION.cff) holds the metadata; GitHub's
 "Cite this repository" button turns it into APA or BibTeX.
 
 ## Acknowledgements
 
 The Markdown editor, file manager and graph view build on code from [Zettlr](https://github.com/Zettlr/Zettlr)
 by Hendrik Erz and the Zettlr contributors (GPL-3.0). See [docs/third-party.md](docs/third-party.md) for the files
-and the data sources PaperTrail uses.
+and the data sources Paperfox uses.
 
 ## License
 
 GPL-3.0-or-later (see [LICENSE](LICENSE)).
+
+Formerly [PaperTrail](https://github.com/Joevonlong/PaperTrail).

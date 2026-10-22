@@ -1,6 +1,6 @@
 # Architecture
 
-PaperTrail is one Node process that serves a JSON/SSE API (Hono) and a built Vue client. The client is a
+Paperfox is one Node process that serves a JSON/SSE API (Hono) and a built Vue client. The client is a
 Markdown workspace (CodeMirror 6, Pinia, d3) with a Library panel. The server talks to scholarly APIs and to
 OpenAI-compatible model endpoints (Nebius Token Factory by default). The behaviour of each feature is specified in
 [features/](features/README.md). This page shows how the parts connect.
@@ -78,13 +78,16 @@ There are three roots, each set by an env var:
 
 | Root | Default | Holds |
 |---|---|---|
-| `DATA_DIR` | `./data` | `papertrail.sqlite`: seed-discovery papers, ids, citations, provenance, runs, candidates, judgements, and the embedding cache. `raw/<api>/<sha256>.json.gz`: the HTTP response cache. `raw/openalex-entities.sqlite`: the OpenAlex entity cache. `raw/pubmed-rec/` and `raw/tavily/`: per-record and per-query caches. `library/<id>/`: libraries built without a question. |
+| `DATA_DIR` | `./data` | `paperfox.sqlite`: seed-discovery papers, ids, citations, provenance, runs, candidates, judgements, and the embedding cache. `raw/<api>/<sha256>.json.gz`: the HTTP response cache. `raw/openalex-entities.sqlite`: the OpenAlex entity cache. `raw/pubmed-rec/` and `raw/tavily/`: per-record and per-query caches. `library/<id>/`: libraries built without a question. |
 | `WORKSPACE_DIR` | `./workspace` | One folder per research question: `Question.md`, `seeds/`, `notes/`, `libraries/<libraryId>/` (`goals.json`, `library.json`, `graph.json`, `papers/`, `chat.jsonl`), `exports/`. Deleted questions go to `.trash/`. |
 | `LOG_DIR` | `./logs` | `runs/<id>/<channel>.jsonl` (api, llm, tavily, events, papers, relations, chat) and `summary.md`. Calls outside a run go to `server/<channel>.jsonl`. Secrets are scrubbed from URLs. |
 
 - `DATA_DIR` is a cache: deleting it only costs re-fetching. `WORKSPACE_DIR` is user data. `LOG_DIR` is for debugging.
 - The SQLite schema is plain SQL, created with `CREATE TABLE IF NOT EXISTS`. There are no migrations.
 - The browser keeps the notes in IndexedDB as a write-through cache of the question folders. The server copy wins.
+- Data from before the rename to Paperfox stays readable: the server keeps using the old SQLite file in `DATA_DIR`
+  while no `paperfox.sqlite` exists (`server/data/db.ts`), and the browser copies its old storage keys once,
+  moving any that do not fit twice in full storage (`client/src/stores/storage-keys.ts`). Both fallbacks go one MINOR release after the rename.
 - Demo mode (`?demo=1`) reads `server/demo/recordings/` and never writes to the workspace.
 
 **Known issue.** The Docker image sets only `DATA_DIR=/data`. `WORKSPACE_DIR` and `LOG_DIR` therefore resolve inside

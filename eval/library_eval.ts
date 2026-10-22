@@ -109,7 +109,7 @@ function rescore(papers: LibPaper[], w: Weights): LibPaper[] {
 
 async function pubmedTop(title: string, exclude: (x: any) => boolean, maxDate?: string) {
   const u = new URL('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi')
-  u.searchParams.set('db', 'pubmed'); u.searchParams.set('term', title); u.searchParams.set('retmax', '40'); u.searchParams.set('retmode', 'json'); u.searchParams.set('sort', 'relevance'); u.searchParams.set('tool', 'papertrail')
+  u.searchParams.set('db', 'pubmed'); u.searchParams.set('term', title); u.searchParams.set('retmax', '40'); u.searchParams.set('retmode', 'json'); u.searchParams.set('sort', 'relevance'); u.searchParams.set('tool', 'paperfox')
   if (maxDate) { u.searchParams.set('datetype', 'pdat'); u.searchParams.set('mindate', '1900/01/01'); u.searchParams.set('maxdate', maxDate.replace(/-/g, '/')) }
   if (process.env.OPENALEX_MAILTO) u.searchParams.set('email', process.env.OPENALEX_MAILTO)
   if (process.env.NCBI_API_KEY) u.searchParams.set('api_key', process.env.NCBI_API_KEY)

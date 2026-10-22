@@ -137,7 +137,7 @@ jobs:
             echo "minor_latest=$minor_latest"
             echo "sha=$sha"
             echo "short=${sha:0:7}"
-            echo "image=ghcr.io/${GITHUB_REPOSITORY,,}"
+            echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/paperfox"
             echo "previous=$previous"
             echo "migrations=$migrations"
           } | tee -a "$GITHUB_OUTPUT"
@@ -178,7 +178,7 @@ jobs:
           context: .
           platforms: linux/${{ matrix.arch }}
           labels: |
-            org.opencontainers.image.title=PaperTrail
+            org.opencontainers.image.title=Paperfox
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ needs.preflight.outputs.sha }}
             org.opencontainers.image.version=${{ needs.preflight.outputs.version }}
@@ -322,7 +322,7 @@ jobs:
             --annotation "index:org.opencontainers.image.revision=$REVISION" \
             --annotation "index:org.opencontainers.image.version=$VERSION" \
             --annotation "index:org.opencontainers.image.licenses=GPL-3.0-or-later" \
-            --annotation "index:org.opencontainers.image.description=PaperTrail $VERSION" \
+            --annotation "index:org.opencontainers.image.description=Paperfox $VERSION" \
             "${sources[@]}"
           digest="$(docker buildx imagetools inspect "$IMAGE:$VERSION" --format '{{json .Manifest}}' | jq -r .digest)"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"

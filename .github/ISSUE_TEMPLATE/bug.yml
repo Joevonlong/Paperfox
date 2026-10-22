@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in PaperTrail does not work as documented.
+description: Something in Paperfox does not work as documented.
 labels: ["type: bug", "status: triage"]
 body:
   - type: markdown
@@ -18,7 +18,7 @@ body:
   - type: dropdown
     id: install
     attributes:
-      label: How do you run PaperTrail?
+      label: How do you run Paperfox?
       options:
         - From source (`pnpm dev` or `pnpm start`)
         - Docker, built locally (`scripts/docker-local.sh` or `docker build`)

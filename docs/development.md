@@ -1,6 +1,6 @@
 # Development setup
 
-This is the one place that describes how to set up PaperTrail for development. You need no API keys for any of it.
+This is the one place that describes how to set up Paperfox for development. You need no API keys for any of it.
 
 ## Requirements
 
@@ -21,7 +21,7 @@ This is the one place that describes how to set up PaperTrail for development. Y
 ## Install
 
 ```bash
-git clone https://github.com/Joevonlong/PaperTrail.git && cd PaperTrail
+git clone https://github.com/Joevonlong/Paperfox.git && cd Paperfox
 pnpm install
 ```
 
@@ -65,7 +65,7 @@ with empty keys is enough. It mounts `data/` and `logs/` next to that file. The 
 | `bash scripts/check-hygiene.sh --range upstream/main...HEAD` | The same rules, only for what your branch adds (this is what CI runs on a PR) |
 
 On a fork, add the main repository as `upstream` first:
-`git remote add upstream https://github.com/Joevonlong/PaperTrail.git && git fetch upstream`.
+`git remote add upstream https://github.com/Joevonlong/Paperfox.git && git fetch upstream`.
 
 ## Local data
 
@@ -120,5 +120,5 @@ from source:
 
 ```bash
 git checkout vX.Y.Z
-docker build -t papertrail:X.Y.Z .
+docker build -t paperfox:X.Y.Z .
 ```

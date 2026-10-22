@@ -1,4 +1,4 @@
-// PaperTrail editor theme in Zettlr's variable scheme (see berlin.ts). The values point at our design tokens
+// Paperfox editor theme in Zettlr's variable scheme (see berlin.ts). The values point at our design tokens
 // (client/src/styles/tokens.css), so Brightfield / Fluorescence switch the editor without a reconfigure.
 import { EditorView } from '@codemirror/view'
 import { defaultVarsLight, type ThemeVars } from '../editor'
@@ -30,4 +30,4 @@ const vars: ThemeVars = {
   '--zettlr-editor-error-color': 'var(--crit)',
 }
 
-export const themePaperTrail = EditorView.theme({ '&': vars })
+export const themePaperfox = EditorView.theme({ '&': vars })

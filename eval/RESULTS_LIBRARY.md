@@ -88,4 +88,4 @@ How to read it:
 
 ## Claim these numbers support
 
-> From a one-line question and 5 seed papers taken from a real review, PaperTrail's Library put 6–10 of that review's hidden references in its top 30 across 7 runs on two immunology reviews (precision@30 0.20–0.33), where a PubMed title search found 0–4 and an OpenAlex search 0–1. In every run the review itself, which was not in the vault, ranked in the top 4.
+> From a one-line question and 5 seed papers taken from a real review, Paperfox's Library put 6–10 of that review's hidden references in its top 30 across 7 runs on two immunology reviews (precision@30 0.20–0.33), where a PubMed title search found 0–4 and an OpenAlex search 0–1. In every run the review itself, which was not in the vault, ranked in the top 4.

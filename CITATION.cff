@@ -1,16 +1,16 @@
 cff-version: 1.2.0
-message: "If you use PaperTrail in your research, please cite it using these metadata."
-title: "PaperTrail"
+message: "If you use Paperfox in your research, please cite it using these metadata."
+title: "Paperfox"
 type: software
 abstract: >-
-  PaperTrail starts from a research question and the papers a researcher already
+  Paperfox starts from a research question and the papers a researcher already
   trusts, and builds a graded library of related papers with the evidence behind
   every score.
 authors:
-  - name: "The PaperTrail contributors"
-    website: "https://github.com/Joevonlong/PaperTrail/graphs/contributors"
-repository-code: "https://github.com/Joevonlong/PaperTrail"
-url: "https://github.com/Joevonlong/PaperTrail"
+  - name: "The Paperfox contributors"
+    website: "https://github.com/Joevonlong/Paperfox/graphs/contributors"
+repository-code: "https://github.com/Joevonlong/Paperfox"
+url: "https://github.com/Joevonlong/Paperfox"
 license: GPL-3.0-or-later
 version: 0.1.0
 date-released: "2026-10-18"

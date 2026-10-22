@@ -17,7 +17,7 @@ def oa_batch(ids,key='openalex_id'):
         for w in r['results']: out[short(w['id'])]=w
     return out
 def eu(tool,params):
-    params=dict(params); params.update({'tool':'papertrail','retmode':'json'})
+    params=dict(params); params.update({'tool':'paperfox','retmode':'json'})
     time.sleep(0.4); return get(f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/{tool}.fcgi?"+urllib.parse.urlencode(params))
 SEEDS=['W2332292689','W2899145148','W3184584468','W4229030906','W3165815938']
 sd=oa_batch(SEEDS)

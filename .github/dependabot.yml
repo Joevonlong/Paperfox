@@ -1,4 +1,4 @@
-# Dependency updates. No auto-merge while PaperTrail is 0.x: a maintainer reviews every PR.
+# Dependency updates. No auto-merge while Paperfox is 0.x: a maintainer reviews every PR.
 # Minor and patch updates are grouped; each major update gets its own PR. A dependency goes
 # to the first group it matches, so ai-sdk comes first. AI SDK PRs are labelled needs-eval
 # (see .github/labeler.yml).

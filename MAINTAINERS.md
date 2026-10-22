@@ -1,6 +1,6 @@
 # Maintainers
 
-This is the one list of PaperTrail maintainers. Roles are described in [GOVERNANCE.md](GOVERNANCE.md).
+This is the one list of Paperfox maintainers. Roles are described in [GOVERNANCE.md](GOVERNANCE.md).
 `.github/CODEOWNERS` must list the same GitHub logins; change both files in the same PR.
 
 | GitHub | Role | Since |
