@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Workspace shell (Zettlr window chrome: toolbar · file tree | tabbed editor | sidebar · status bar). Owner: lane B.
+// Workspace shell (Zettlr window chrome: toolbar · file tree | tabbed editor | sidebar · status bar).
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import FileTree from './workspace/FileTree.vue'
 import EditorArea from './workspace/EditorArea.vue'

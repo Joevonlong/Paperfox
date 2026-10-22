@@ -1,4 +1,4 @@
-// Owner: lane L1. OpenAlex for Library mode: search, batched works / sources / authors with the spec §3 field lists.
+// OpenAlex for Library mode: search, batched works / sources / authors with fixed field lists.
 // Every GET goes through the raw cache; the 'openalex' circuit breaker in server/data/http.ts stops network calls
 // once the (shared, keyless) budget is exhausted. `budget` counts network-or-cache requests issued per library.
 // Batches (works / sources / authors by id) go through the per-entity cache (openalex-entities.ts): cached ids are served
@@ -12,7 +12,7 @@ const BASE = 'https://api.openalex.org'
 export const LIB_SELECT = ['id', 'doi', 'ids', 'display_name', 'publication_year', 'publication_date', 'type', 'type_crossref', 'cited_by_count',
   'citation_normalized_percentile', 'fwci', 'counts_by_year', 'primary_location', 'best_oa_location', 'open_access', 'authorships', 'primary_topic',
   'topics', 'keywords', 'language', 'is_retracted', 'referenced_works', 'abstract_inverted_index'].join(',')
-// Note: spec §3 lists 'grants', but OpenAlex now rejects it ("grants is not a valid select field", 400). Funders come from PubMed GrantList.
+// Note: OpenAlex rejects 'grants' ("grants is not a valid select field", 400). Funders come from PubMed GrantList.
 export const SOURCE_SELECT = 'id,display_name,type,host_organization_name,summary_stats,is_core,is_in_doaj,issn_l,works_count,cited_by_count'
 export const AUTHOR_SELECT = 'id,display_name,summary_stats,works_count,cited_by_count,last_known_institutions'
 

@@ -12,7 +12,7 @@ import type { ScoutResult, ScoutStep } from './index'
 
 const short = (s: string, n = 160) => { const t = s.replace(/\s+/g, ' ').trim(); return t.length > n ? t.slice(0, n - 1) + '…' : t }
 
-// ---- OpenAlex (tiny direct client; A1 owns the full one) ----
+// ---- OpenAlex (tiny direct client; the full one is server/sources/openalex.ts) ----
 const oaParams = () => {
   const p = new URLSearchParams()
   if (env.openalexKey) p.set('api_key', env.openalexKey)

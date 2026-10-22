@@ -1,9 +1,9 @@
-// Library mode state (lanes L3, U1). POST /api/library with every vault note, then the SSE stream of LibraryEvents.
+// Library mode state. POST /api/library with every vault note, then the SSE stream of LibraryEvents.
 // R-3.1 / F-50: no automatic mock fallback. A failed request shows an error with Retry. The dev mock
 // (client/src/library/mock.ts) loads only in dev builds with ?mock=1 (dynamic import, dropped from production builds).
 // ?demo=1 replays a recorded REAL run: GET /api/demo/library/stream + /api/demo/library (+ /papers/:paperId).
 // D-27: passed = rank within the top X% of the scored, non-excluded papers AND total ≥ the minimum score; re-computed
-// in the browser whenever weights, the pass rule or the filters change. Lane U2's chat uses applyProposal() / currentSettings().
+// in the browser whenever weights, the pass rule or the filters change. The chat column uses applyProposal() / currentSettings().
 import { defineStore } from 'pinia'
 import { DEFAULT_WEIGHTS, LibPaper, LibraryEvent, LibraryRequest, LibrarySummary, SourceName, type Filters, type Goals, type Proposal, type Weights } from '@shared/library'
 import { Seed } from '@shared/contracts'

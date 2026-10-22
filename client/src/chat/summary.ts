@@ -1,4 +1,4 @@
-// Lane F1 (CR-7 Q-3b/c). A clean one-line summary of a chat proposal for the user (the "Applied from chat" banner),
+// CR-7 Q-3b/c: A clean one-line summary of a chat proposal for the user (the "Applied from chat" banner),
 // built from the proposal fields only, never from the model's rationale. Weights read as normalized % shares.
 import { Labels, type Proposal, type Weights } from '@shared/library'
 import type { LibSettings } from './libApi'

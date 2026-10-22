@@ -1,4 +1,4 @@
-// Owner: lane A1. OpenAlex client: single work, id/pmid/doi batches, cites-pair filter (R2), search (R4).
+// OpenAlex client: single work, id/pmid/doi batches, cites-pair filter (R2), search (R4).
 // All GETs go through the raw cache (server/data/http.ts).
 import type { Paper } from '@shared/contracts'
 import { cachedJson, HttpError, mapLimit } from '../data/http'

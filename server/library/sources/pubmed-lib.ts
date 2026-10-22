@@ -1,4 +1,4 @@
-// Owner: lane L1. PubMed for Library mode: esearch (relevance) → efetch XML with PublicationType + MeSH.
+// PubMed for Library mode: esearch (relevance) → efetch XML with PublicationType + MeSH.
 // GETs go through the raw cache + 'pubmed' gate (≤3 req/s) in server/data/http.ts.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'

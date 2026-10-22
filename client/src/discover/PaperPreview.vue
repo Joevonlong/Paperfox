@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Preview of the literature note a candidate would become. Owner: lane C.
+// Preview of the literature note a candidate would become.
 import { computed } from 'vue'
 import { ROUTE_LABEL } from '@shared/contracts'
 import { useDiscovery, REJECT_REASONS, type RejectReason } from '../stores/discovery'

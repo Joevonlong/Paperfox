@@ -1,4 +1,4 @@
-// Owner: lane U2. Library chat agent (D-26, D-29): answers questions about one library from its JSON (goals + every
+// Library chat agent (D-26, D-29): answers questions about one library from its JSON (goals + every
 // scored paper) and, when the user asks to change priorities, PROPOSES weights / pass rule / filters as a diff.
 // The server never applies a proposal; the UI shows it and the user clicks Apply (POST /applied logs it).
 // Every turn is traced: the model call to logs/runs/<id>/llm.jsonl (via chatJson), the turn to chat.jsonl.

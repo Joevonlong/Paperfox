@@ -1,4 +1,4 @@
-// Run tracing (captain-owned). Every outbound call and every intermediate result is appended as JSON lines:
+// Run tracing. Every outbound call and every intermediate result is appended as JSON lines:
 //   ${LOG_DIR:-./logs}/runs/<runId>/<channel>.jsonl   when inside a run
 //   ${LOG_DIR:-./logs}/server/<channel>.jsonl         otherwise (e.g. seed preview, smoke tests)
 // Channels: api (OpenAlex / PubMed / Europe PMC HTTP), llm (Token Factory), tavily, events (RunEvents),

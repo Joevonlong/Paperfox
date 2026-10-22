@@ -1,4 +1,4 @@
-// Owner: lane A1. In-memory run registry: events log + live listeners (SSE replays the log, then follows).
+// In-memory run registry: events log + live listeners (SSE replays the log, then follows).
 import { RunEvent, type Candidate, type Facet, type RunPreset, type RunSnapshot, type Seed } from '@shared/contracts'
 import type { RunConfig } from '@shared/config'
 import { trace } from '../trace'

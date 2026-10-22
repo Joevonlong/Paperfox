@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Collapsible pretty JSON (lane L3): objects and arrays fold with <details>; the top two levels open by default.
+// Collapsible pretty JSON: objects and arrays fold with <details>; the top two levels open by default.
 defineOptions({ name: 'JsonTree' })
 const props = withDefaults(defineProps<{ value: unknown; name?: string; depth?: number }>(), { name: '', depth: 0 })
 const isObj = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === 'object'

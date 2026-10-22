@@ -1,5 +1,5 @@
-// Owner: lane L2. TEST-ONLY fixture source (LIBRARY_FIXTURE=1): stands in for L1's gather() while it is built.
-// Turns docs/data/melanoma-lanes-snapshot.json (31 lane papers) + the melanoma demo recording (abstracts, authors,
+// TEST-ONLY fixture source (LIBRARY_FIXTURE=1): stands in for gather() so the pipeline runs offline.
+// Turns server/demo/fixtures/melanoma-lanes-snapshot.json (31 lane papers) + the melanoma demo recording (abstracts, authors,
 // seed links) into ~60 EnrichedRecords. Venue / author metrics are NOT in these files, so they stay null (→ the
 // score shows "not assessed" and redistributes their weight). Nothing here is invented.
 import { readFileSync } from 'node:fs'
@@ -8,7 +8,7 @@ import type { Paper } from '@shared/contracts'
 import type { Goals, Hit, LibraryRequest } from '@shared/library'
 import type { EnrichedRecord, SourceCall } from './types'
 
-const SNAPSHOT = fileURLToPath(new URL('../../docs/data/melanoma-lanes-snapshot.json', import.meta.url))
+const SNAPSHOT = fileURLToPath(new URL('../demo/fixtures/melanoma-lanes-snapshot.json', import.meta.url))
 const RECORDING = fileURLToPath(new URL('../demo/recordings/melanoma.json', import.meta.url))
 
 const PAPER_KEYS: (keyof Paper)[] = ['id', 'doi', 'pmid', 'pmcid', 'title', 'authors', 'year', 'publicationDate', 'venue', 'type', 'citedByCount', 'citationPct', 'isRetracted', 'isOa', 'oaUrl', 'abstract', 'abstractSource', 'referencedWorks', 'url']

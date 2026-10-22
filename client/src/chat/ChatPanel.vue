@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Lane U2. Chat column on the far right (D-26): multi-round chat about the current library, paper citations that
+// Chat column on the far right (D-26): multi-round chat about the current library, paper citations that
 // open the paper view, and proposal diff cards (D-29). `collapsed` renders the icon rail only.
 import { computed, nextTick, ref, watch } from 'vue'
 import { useChat, SUGGESTED, type ChatTurn } from '../stores/chat'

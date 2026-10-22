@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Owner: lane B. Zettlr-style file tree (win-main/file-manager): folders by path prefix, colored note dots.
+// Zettlr-style file tree (win-main/file-manager): folders by path prefix, colored note dots.
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useVault, type Note } from '../stores/vault'
 import { useUi } from '../stores/ui'

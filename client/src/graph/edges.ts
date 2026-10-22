@@ -1,4 +1,4 @@
-// Owner: lane C. CR-10 E-1: citation edges for the graph view. Pure functions (no store access) so they are unit-tested.
+// CR-10 E-1: citation edges for the graph view. Pure functions (no store access) so they are unit-tested.
 // One id index over the drawn nodes: OpenAlex W id (with or without https://openalex.org/), DOI (without https://doi.org/),
 // PMID ("pmid:123" or "123"), arXiv id. Edges come from each drawn paper's referencedWorks and its cites / cited_by relations.
 import type { Paper } from '@shared/contracts'

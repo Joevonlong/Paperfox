@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// F-47 / D-25 "Why this score" as a report card (lane U1): overall letter grade, one row per component (name, letter
+// F-47 / D-25 "Why this score" as a report card: overall letter grade, one row per component (name, letter
 // grade, one-line reason + the key number, weight, contribution), evidence folded under each row with source links.
 // Not-assessed rows say why and that their weight moved to the assessed components.
 // CR-11: the header is a chart (score donut + value bars, same numbers as the rows); the text rows stay below, folded.

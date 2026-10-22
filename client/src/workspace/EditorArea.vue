@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Owner: lane B. Tabs (Zettlr win-main/DocumentTabs.vue); kind 'note' → Markdown editor,
-// 'preview' → discover/PaperPreview.vue, 'graph' → graph/GraphView.vue (lane C).
+// Tabs (Zettlr win-main/DocumentTabs.vue); kind 'note' → Markdown editor,
+// 'preview' → discover/PaperPreview.vue, 'graph' → graph/GraphView.vue.
 // CR-6 (F-63): back/forward buttons, ⌘[ / ⌘] and Alt+←/→, browser history binding, and per-tab restore of the
 // centre pane's scroll position and focused item. GraphView and LibraryResults are kept alive so their DOM, zoom
 // and local UI state survive a jump to a paper or note.

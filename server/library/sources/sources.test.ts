@@ -1,4 +1,4 @@
-// Lane L1 offline tests: parsers, dedupe/merge, title similarity, SerpAPI mapping, query plan. No network.
+// Library search offline tests: parsers, dedupe/merge, title similarity, SerpAPI mapping, query plan. No network.
 import { describe, expect, it } from 'vitest'
 import type { Goals } from '@shared/library'
 import { parseArxivAtom, arxivQuery } from './arxiv'

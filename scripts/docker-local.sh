@@ -7,7 +7,9 @@ d="$ROOT"; ENV_FILE=""
 while [[ "$d" != "/" ]]; do [[ -f "$d/.env.local" ]] && { ENV_FILE="$d/.env.local"; break; }; d="$(dirname "$d")"; done
 [[ -n "$ENV_FILE" ]] || { echo "ERROR: .env.local not found"; exit 1; }
 DATA="$(dirname "$ENV_FILE")"
-# Docker Desktop's credential store hangs on this Mac: use a private config (contexts and plugins linked).
+# Build with a private Docker config (.docker-deploy/, git-ignored) that has no credential helper: the image is local,
+# so no registry login is needed, and a slow or hanging credsStore cannot block the build. Contexts and CLI plugins
+# are linked from ~/.docker.
 export DOCKER_CONFIG="$ROOT/.docker-deploy"; mkdir -p "$DOCKER_CONFIG"
 [[ -f "$DOCKER_CONFIG/config.json" ]] || printf '{"auths":{},"currentContext":"%s"}\n' "$(docker context show 2>/dev/null || echo default)" > "$DOCKER_CONFIG/config.json"
 for x in contexts cli-plugins buildx; do [[ -e "$HOME/.docker/$x" && ! -e "$DOCKER_CONFIG/$x" ]] && ln -s "$HOME/.docker/$x" "$DOCKER_CONFIG/$x"; done
