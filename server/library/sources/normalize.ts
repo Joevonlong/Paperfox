@@ -1,4 +1,4 @@
-// Owner: lane L1. Raw search hits → candidates; identifier helpers, title similarity, dedupe + merge, cap.
+// Raw search hits → candidates; identifier helpers, title similarity, dedupe + merge, cap.
 import { createHash } from 'node:crypto'
 import type { Hit, SourceName } from '@shared/library'
 import { normDoi, shortId } from '../../sources/openalex'

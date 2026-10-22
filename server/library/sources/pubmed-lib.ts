@@ -1,4 +1,4 @@
-// Owner: lane L1. PubMed for Library mode: esearch (relevance) → efetch XML with PublicationType + MeSH.
+// PubMed for Library mode: esearch (relevance) → efetch XML with PublicationType + MeSH.
 // GETs go through the raw cache + 'pubmed' gate (≤3 req/s) in server/data/http.ts.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -11,7 +11,7 @@ const EU = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils'
 export function euUrl(tool: string, params: Record<string, string | number>): string {
   const u = new URL(`${EU}/${tool}.fcgi`)
   for (const [k, v] of Object.entries(params)) u.searchParams.set(k, String(v))
-  u.searchParams.set('tool', 'papertrail')
+  u.searchParams.set('tool', 'paperfox')
   if (process.env.OPENALEX_MAILTO) u.searchParams.set('email', process.env.OPENALEX_MAILTO)
   if (process.env.NCBI_API_KEY) u.searchParams.set('api_key', process.env.NCBI_API_KEY)
   return u.toString()

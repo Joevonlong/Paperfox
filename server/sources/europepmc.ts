@@ -1,4 +1,4 @@
-// Owner: lane A1. Europe PMC: last step of the abstract waterfall (OpenAlex → PubMed → Europe PMC), by DOI.
+// Europe PMC: last step of the abstract waterfall (OpenAlex → PubMed → Europe PMC), by DOI.
 import { cachedGet, cachedJson, mapLimit } from '../data/http'
 
 const BASE = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search'

@@ -1,11 +1,11 @@
-// Builds server/demo/recordings/melanoma.json from the measured fixtures in docs/data (provisional demo).
+// Builds server/demo/recordings/melanoma.json from the measured fixtures in server/demo/fixtures (provisional demo).
 // Replaced by a real recording from scripts/record-demo.ts. Run: pnpm tsx server/demo/build-provisional.ts
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { RunSnapshot, type Candidate, type Seed, type RunEvent, type Lane, type RouteId } from '../../shared/contracts'
 
-const lanes = JSON.parse(readFileSync('docs/data/melanoma-lanes-snapshot.json', 'utf8'))
+const lanes = JSON.parse(readFileSync('server/demo/fixtures/melanoma-lanes-snapshot.json', 'utf8'))
 const citers: { id: string; title: string; year: number; cites: number; seeds: string[]; doi: string; type: string; venue: string; author: string }[] =
-  JSON.parse(readFileSync('docs/data/melanoma-multi-seed-citers.json', 'utf8'))
+  JSON.parse(readFileSync('server/demo/fixtures/melanoma-multi-seed-citers.json', 'utf8'))
 
 const QUESTION = 'Which single-cell methods help study melanoma immune cells?'
 const SEED_DEFS = [

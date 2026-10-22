@@ -5,7 +5,7 @@ import { lastName, firstAuthor } from '../../discover/literatureNote'
 import { COMPONENT_META, f2, grade, keyNumber, reason, type ComponentKey } from '../score'
 
 export type ResultsView = 'tiles' | 'table'
-export const VIEW_KEY = 'papertrail.library.view'
+export const VIEW_KEY = 'paperfox.library.view'
 export function loadView(): ResultsView {
   try { return localStorage.getItem(VIEW_KEY) === 'table' ? 'table' : 'tiles' } catch { return 'tiles' }
 }

@@ -6,7 +6,7 @@ import type { Extension } from '@codemirror/state'
 import { markdownParser } from './zettlr/parser/markdown-parser'
 import { markdownSyntaxHighlighter } from './zettlr/theme/syntax'
 import { editorTheme } from './zettlr/theme/editor'
-import { themePaperTrail } from './zettlr/theme/themes/papertrail'
+import { themePaperfox } from './zettlr/theme/themes/paperfox'
 import { configField } from './zettlr/util/configuration'
 import { renderHeadings } from './zettlr/renderers/render-headings'
 import { renderEmphasis } from './zettlr/renderers/render-emphasis'
@@ -26,7 +26,7 @@ export function editorExtensions (links: WikilinkOptions, onChange: (doc: string
     markdownParser(),
     markdownSyntaxHighlighter(),
     editorTheme,
-    themePaperTrail,
+    themePaperfox,
     renderHeadings,
     renderEmphasis,
     renderHorizontalRules,

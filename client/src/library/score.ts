@@ -1,4 +1,4 @@
-// Library score helpers (lane U1). The formula follows docs/LIBRARY_SPEC.md §5:
+// Library score helpers (docs/features/quality-score.md):
 // contribution_i = w_i × value_i / Σ_{assessed} w_j  (null value = not assessed → its weight is redistributed).
 // Pass rule (D-27): passed = rank within the top X% of the scored, non-excluded papers AND total ≥ the floor.
 // Grades and verdicts (D-25): A ≥ 0.85, B ≥ 0.70, C ≥ 0.55, D ≥ 0.40, else E; one plain sentence per paper.

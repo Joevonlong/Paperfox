@@ -1,4 +1,4 @@
-// Owner: lane A1. NCBI E-utilities: efetch abstracts (XML → text) and elink pubmed_pubmed neighbours (R3).
+// NCBI E-utilities: efetch abstracts (XML → text) and elink pubmed_pubmed neighbours (R3).
 // Throttled to ≤3 req/s by the 'pubmed' gate in server/data/http.ts; cached like every other GET.
 import { cachedGet, mapLimit } from '../data/http'
 
@@ -7,7 +7,7 @@ const EU = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils'
 function url(tool: string, params: Record<string, string | number>): string {
   const u = new URL(`${EU}/${tool}.fcgi`)
   for (const [k, v] of Object.entries(params)) u.searchParams.set(k, String(v))
-  u.searchParams.set('tool', 'papertrail')
+  u.searchParams.set('tool', 'paperfox')
   if (process.env.OPENALEX_MAILTO) u.searchParams.set('email', process.env.OPENALEX_MAILTO)
   if (process.env.NCBI_API_KEY) u.searchParams.set('api_key', process.env.NCBI_API_KEY)
   return u.toString()

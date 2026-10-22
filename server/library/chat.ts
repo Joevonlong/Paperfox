@@ -1,4 +1,4 @@
-// Owner: lane U2. Library chat agent (D-26, D-29): answers questions about one library from its JSON (goals + every
+// Library chat agent (D-26, D-29): answers questions about one library from its JSON (goals + every
 // scored paper) and, when the user asks to change priorities, PROPOSES weights / pass rule / filters as a diff.
 // The server never applies a proposal; the UI shows it and the user clicks Apply (POST /applied logs it).
 // Every turn is traced: the model call to logs/runs/<id>/llm.jsonl (via chatJson), the turn to chat.jsonl.
@@ -321,7 +321,7 @@ export function resolveCited(reply: string, cited: unknown[] | null | undefined,
   return [...ranks].map(r => byRank.get(r)).filter((p): p is LibPaper => !!p).slice(0, 40).map(p => ({ rank: p.rank, paperId: p.paper.id, title: p.paper.title }))
 }
 
-const SYSTEM = `You are PaperTrail's library assistant. The user built a scored research library for one question; the full library data is below.
+const SYSTEM = `You are Paperfox's library assistant. The user built a scored research library for one question; the full library data is below.
 Answer ONLY from this data. Be concise (under 180 words unless asked for more), concrete, and use numbers from the data.
 Cite papers inline in square brackets as [#rank Title], e.g. "[#9 CD8+ T cell states in human cancer] (2020, review) …", with the exact rank from PAPERS (a long title may be shortened to its first 6–8 words). Use markdown bullets for lists. Never invent papers, ranks or numbers.
 When asked "why is #a above #b", compare their component values and weights.

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Lane U2. A chat proposal as a diff card (weights old → new, pass rule, filters, rationale) with Apply / Dismiss.
+// A chat proposal as a diff card (weights old → new, pass rule, filters, rationale) with Apply / Dismiss.
 import { computed } from 'vue'
 import type { Proposal, Weights } from '@shared/library'
 import type { LibSettings } from './libApi'

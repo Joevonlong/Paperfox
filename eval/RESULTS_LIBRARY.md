@@ -5,7 +5,7 @@ Main runs used main at `0aae755` (top-25% pass rule and subtopic fix). Repeat ru
 
 ## Method
 
-Same idea as `eval/holdout.py` (docs/RANKING_AND_STORAGE.md §1).
+Same idea as `eval/holdout.py` (results: eval/RESULTS_SEED_PIPELINE.md).
 
 - **Reviews.** OpenAlex `referenced_works` gives each review's reference list.
   - A = W3005326482, "CD8+ T cell states in human cancer: insights from single-cell analysis" (2020-02-05). It has 93 references, 1 of which OpenAlex cannot resolve.
@@ -86,6 +86,6 @@ How to read it:
 - **Reach is limited by the pile cap.** At cap 600, B reached 29 hidden references. That is fewer than the 35 the seeds cite directly, so the cap drops reachable papers. Cap 1500 lifts reach to 53/230 (B) and 39/87 (A), but hits@30 did not rise reliably: 10 and 6, against 7 and 8 at cap 600.
 - **The review itself is ranked.** It sits at rank 1 to 4 in every run. Scored strictly, it is a miss. It is still a sign that the pipeline finds the right literature hub from 5 seeds.
 
-## Claim we may put in the pitch
+## Claim these numbers support
 
-> From a one-line question and 5 seed papers taken from a real review, PaperTrail's Library put 6–10 of that review's hidden references in its top 30 across 7 runs on two immunology reviews (precision@30 0.20–0.33), where a PubMed title search found 0–4 and an OpenAlex search 0–1. In every run the review itself, which was not in the vault, ranked in the top 4.
+> From a one-line question and 5 seed papers taken from a real review, Paperfox's Library put 6–10 of that review's hidden references in its top 30 across 7 runs on two immunology reviews (precision@30 0.20–0.33), where a PubMed title search found 0–4 and an OpenAlex search 0–1. In every run the review itself, which was not in the vault, ranked in the top 4.

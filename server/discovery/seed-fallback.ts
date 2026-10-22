@@ -105,7 +105,7 @@ async function europePmc(query: string): Promise<Paper | null> {
 
 async function esummary(pmid: string): Promise<Paper | null> {
   const u = new URL('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi')
-  u.searchParams.set('db', 'pubmed'); u.searchParams.set('id', pmid); u.searchParams.set('retmode', 'json'); u.searchParams.set('tool', 'papertrail')
+  u.searchParams.set('db', 'pubmed'); u.searchParams.set('id', pmid); u.searchParams.set('retmode', 'json'); u.searchParams.set('tool', 'paperfox')
   if (process.env.OPENALEX_MAILTO) u.searchParams.set('email', process.env.OPENALEX_MAILTO)
   if (process.env.NCBI_API_KEY) u.searchParams.set('api_key', process.env.NCBI_API_KEY)
   const r = await cachedJson('pubmed', u.toString(), { timeoutMs: TIMEOUT })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Workspace shell (Zettlr window chrome: toolbar · file tree | tabbed editor | sidebar · status bar). Owner: lane B.
+// Workspace shell (Zettlr window chrome: toolbar · file tree | tabbed editor | sidebar · status bar).
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import FileTree from './workspace/FileTree.vue'
 import EditorArea from './workspace/EditorArea.vue'
@@ -17,7 +17,7 @@ const vault = useVault()
 const ui = useUi()
 const discovery = useDiscovery()
 const library = useLibrary()
-const THEME_KEY = 'papertrail:theme'
+const THEME_KEY = 'paperfox:theme'
 
 // Responsive shell: the editor keeps >= EDITOR_MIN px. As the window narrows, the file tree stops docking first
 // (it opens as an overlay drawer from the left), then the sidebar (overlay drawer from the right).
@@ -95,7 +95,7 @@ const fmt = (n: number) => n.toLocaleString('en-US')
 <template>
   <div class="app">
     <header class="toolbar">
-      <span class="brand"><b>PaperTrail</b></span>
+      <span class="brand"><b>Paperfox</b></span>
       <button class="tb" type="button" :aria-pressed="showFiles" title="Toggle file tree" @click="toggleFiles"><Icon name="files" /><span class="lbl">Files</span></button>
       <button class="tb" type="button" :aria-pressed="ui.activeTab?.kind === 'graph'" title="Open the graph view" @click="ui.openGraph()"><Icon name="graph" /><span class="lbl">Graph</span></button>
       <button class="tb" type="button" :aria-pressed="showSidebar && ui.sideTab === 'library'" title="Build a scored library from the whole vault" @click="discover"><Icon name="discover" />Library</button>

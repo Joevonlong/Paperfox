@@ -54,7 +54,7 @@ onMounted(() => {
   })
 })
 
-// External updates (e.g. lane C rewrites a literature note) replace the doc when we have no pending edits.
+// External updates (e.g. a literature note is rewritten) replace the doc when we have no pending edits.
 watch(() => vault.byPath(props.path)?.content, c => {
   if (!view || c === undefined || c === lastSaved || timer && view.state.doc.toString() !== lastSaved) return
   if (c !== view.state.doc.toString()) view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: c } })

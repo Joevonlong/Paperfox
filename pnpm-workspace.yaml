@@ -1,0 +1,6 @@
+# Dependencies allowed to run install scripts. pnpm blocks every other
+# dependency's build script and fails the install, so a new entry here
+# needs a reason in the PR.
+allowBuilds:
+  better-sqlite3: true # native SQLite binding (prebuilt binary or node-gyp build)
+  esbuild: true # installs the platform-specific esbuild binary (used by vite, tsup, tsx)

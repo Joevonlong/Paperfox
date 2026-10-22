@@ -1,0 +1,74 @@
+name: Triage
+
+# Weekly maintenance queue.
+#   stale   reminds, then closes, issues and pull requests labelled "status: needs-info"
+#           that got no reply (30 days to the reminder, 7 more to closing)
+#   digest  rewrites the pinned "Triage queue" issue (number in the repository variable
+#           TRIAGE_ISSUE) and assigns it to this week's on-duty maintainer from MAINTAINERS.md
+#           (scripts/triage/digest.mjs; try it locally with --dry-run)
+
+on:
+  schedule:
+    - cron: '17 6 * * 1' # Mondays 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  discussions: read
+  # Lists workflow runs waiting for approval (fork pull requests).
+  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  stale:
+    name: stale
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          only-labels: 'status: needs-info'
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: stale
+          stale-pr-label: stale
+          remove-stale-when-updated: true
+          stale-issue-message: >-
+            This issue has been waiting for more information for 30 days. It will be closed in
+            7 days unless someone replies. A reply removes the stale label; a closed issue can be
+            reopened at any time.
+          stale-pr-message: >-
+            This pull request has been waiting for more information for 30 days. It will be
+            closed in 7 days unless someone replies or pushes. A closed pull request can be
+            reopened at any time.
+          close-issue-message: Closed after 37 days without the information we asked for. Reply here to reopen it.
+          close-pr-message: Closed after 37 days without the information we asked for. Reply here to reopen it.
+          close-issue-reason: not_planned
+
+  digest:
+    name: digest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      # Runs main's copy of the script and MAINTAINERS.md; nothing from pull requests.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Update the Triage queue issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TRIAGE_ISSUE: ${{ vars.TRIAGE_ISSUE }}
+        run: node scripts/triage/digest.mjs

@@ -1,4 +1,4 @@
-// Owner: lane L2. Test helper: build EnrichedRecords with sensible defaults (used by *.test.ts only).
+// Test helper: build EnrichedRecords with sensible defaults (used by *.test.ts only).
 import type { Paper } from '@shared/contracts'
 import type { Goals } from '@shared/library'
 import type { EnrichedRecord } from './types'

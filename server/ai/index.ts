@@ -1,4 +1,4 @@
-// Owner: lane A2 (AI). The pipeline (A1) calls ONLY these functions. Every function must degrade
+// The discovery pipeline calls ONLY these functions. Every function must degrade
 // gracefully: with no TOKEN_FACTORY_API_KEY or on timeout it returns null / [] and the pipeline continues.
 import type { Facet, Features, Judgement, Paper, Seed } from '@shared/contracts'
 import type { RunConfig } from '@shared/config'

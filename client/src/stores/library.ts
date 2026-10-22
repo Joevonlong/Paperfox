@@ -1,9 +1,9 @@
-// Library mode state (lanes L3, U1). POST /api/library with every vault note, then the SSE stream of LibraryEvents.
+// Library mode state. POST /api/library with every vault note, then the SSE stream of LibraryEvents.
 // R-3.1 / F-50: no automatic mock fallback. A failed request shows an error with Retry. The dev mock
 // (client/src/library/mock.ts) loads only in dev builds with ?mock=1 (dynamic import, dropped from production builds).
 // ?demo=1 replays a recorded REAL run: GET /api/demo/library/stream + /api/demo/library (+ /papers/:paperId).
 // D-27: passed = rank within the top X% of the scored, non-excluded papers AND total ≥ the minimum score; re-computed
-// in the browser whenever weights, the pass rule or the filters change. Lane U2's chat uses applyProposal() / currentSettings().
+// in the browser whenever weights, the pass rule or the filters change. The chat column uses applyProposal() / currentSettings().
 import { defineStore } from 'pinia'
 import { DEFAULT_WEIGHTS, LibPaper, LibraryEvent, LibraryRequest, LibrarySummary, SourceName, type Filters, type Goals, type Proposal, type Weights } from '@shared/library'
 import { Seed } from '@shared/contracts'
@@ -55,10 +55,10 @@ export interface SeedRow { input: string; status: 'resolved' | 'not found' | 'du
 /** Q2-6: a seed resolved without OpenAlex (POST /api/seeds/resolve `resolvedVia`). */
 export interface SeedVia { input: string; paperId?: string; source: string; reason?: string }
 /** D-35: the last opened library per question (localStorage; '' = no question). */
-const LAST_KEY = (q: string | null) => `papertrail:lastLibrary:${q ?? ''}`
+const LAST_KEY = (q: string | null) => `paperfox:lastLibrary:${q ?? ''}`
 export const lastOpened = (q: string | null) => { try { return localStorage.getItem(LAST_KEY(q)) } catch { return null } }
 /** Q-1: the viewer's pass rule / weights / filters / topK per library (restored when the library is reopened). */
-export const LIB_SETTINGS_KEY = (id: string) => `papertrail:libSettings:${id}`
+export const LIB_SETTINGS_KEY = (id: string) => `paperfox:libSettings:${id}`
 const setLastOpened =(q: string | null, id: string | null) => { try { if (id) localStorage.setItem(LAST_KEY(q), id); else localStorage.removeItem(LAST_KEY(q)) } catch { /* private mode */ } }
 /** Seed note front matter -> table fields. */
 export function seedInfo(content: string): { title: string; year: string; id: string; label: string } {

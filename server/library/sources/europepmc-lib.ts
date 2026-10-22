@@ -1,4 +1,4 @@
-// Owner: lane L1. Europe PMC as a resolver when OpenAlex cannot be reached: DOI / title → PMID, title, journal, year, abstract.
+// Europe PMC as a resolver when OpenAlex cannot be reached: DOI / title → PMID, title, journal, year, abstract.
 import { cachedJson, mapLimit } from '../../data/http'
 import { sameTitle } from './normalize'
 

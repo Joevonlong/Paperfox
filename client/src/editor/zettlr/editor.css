@@ -1,5 +1,5 @@
 /* Adapted from Zettlr source/common/modules/markdown-editor/editor.css (GPL-3.0, Hendrik Erz).
-   Hard-coded panel/tooltip colors replaced with PaperTrail tokens; desktop-only parts (iframes, vim, formatting bar) dropped. */
+   Hard-coded panel/tooltip colors replaced with Paperfox tokens; desktop-only parts (iframes, vim, formatting bar) dropped. */
 
 .cm-scroller { flex-grow: 1; outline: 0; }
 

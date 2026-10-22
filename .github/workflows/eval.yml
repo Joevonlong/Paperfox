@@ -1,0 +1,197 @@
+name: Eval
+
+# Runs the Library-mode hold-out eval (eval/library_eval.ts) against one exact commit,
+# with real model and search API keys. Started by hand only; never on a schedule.
+#
+# The job uses environment "eval": a maintainer must approve each run before the keys are
+# exposed. When the commit comes from a pull request (possibly a fork), read its diff first:
+# the server that receives the keys is built from that code.
+#
+# The run is named "eval <sha>", so a run can be matched to a pull request head SHA
+# (the run's own headSha is the branch the workflow was started from, not the evaluated commit):
+#   gh run list --workflow eval.yml --branch main --event workflow_dispatch --status success \
+#     --json databaseId,displayTitle --jq '.[] | select(.displayTitle == "eval <sha>")'
+
+run-name: eval ${{ inputs.sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Full 40-character commit SHA to evaluate (for a PR, its current head SHA)
+        required: true
+        type: string
+      pr:
+        description: Pull request number; checks out refs/pull/<pr>/head (give pr or ref, not both)
+        required: false
+        type: string
+      ref:
+        description: Branch or tag to check out instead of a pull request
+        required: false
+        type: string
+      reviews:
+        description: OpenAlex ids of the reviews to evaluate (space-separated)
+        required: false
+        type: string
+        default: W3005326482 W4365143025
+
+permissions: {}
+
+concurrency:
+  group: eval-${{ inputs.sha }}
+  cancel-in-progress: false
+
+jobs:
+  eval:
+    name: eval
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: eval
+    permissions:
+      contents: read
+    env:
+      PORT: '3022'
+      LIB_BASE: http://127.0.0.1:3022
+    steps:
+      - name: Check inputs
+        id: target
+        env:
+          SHA: ${{ inputs.sha }}
+          PR: ${{ inputs.pr }}
+          REF: ${{ inputs.ref }}
+          REVIEWS: ${{ inputs.reviews }}
+        run: |
+          if [[ ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error title=eval inputs::sha must be a full 40-character lowercase commit SHA"
+            exit 1
+          fi
+          if [[ -n "$PR" && -n "$REF" ]] || [[ -z "$PR" && -z "$REF" ]]; then
+            echo "::error title=eval inputs::give exactly one of pr or ref"
+            exit 1
+          fi
+          if [[ -n "$PR" ]]; then
+            if [[ ! "$PR" =~ ^[1-9][0-9]*$ ]]; then
+              echo "::error title=eval inputs::pr must be a pull request number"
+              exit 1
+            fi
+            ref="refs/pull/$PR/head"
+          else
+            if [[ "$REF" == -* || ! "$REF" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+              echo "::error title=eval inputs::ref must be a branch or tag name"
+              exit 1
+            fi
+            ref="$REF"
+          fi
+          if [[ ! "$REVIEWS" =~ ^W[0-9]+([[:space:]]+W[0-9]+)*$ ]]; then
+            echo "::error title=eval inputs::reviews must be OpenAlex work ids such as W3005326482"
+            exit 1
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Evaluating $SHA from $ref"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.target.outputs.ref }}
+          persist-credentials: false
+
+      - name: Require the checked-out commit to be the requested SHA
+        env:
+          SHA: ${{ inputs.sha }}
+          REF: ${{ steps.target.outputs.ref }}
+        run: |
+          head="$(git rev-parse HEAD)"
+          if [ "$head" != "$SHA" ]; then
+            echo "::error title=eval sha mismatch::$REF is at $head, not $SHA. The branch moved after the run was requested; start a new run with the current head SHA."
+            exit 1
+          fi
+          echo "HEAD is $head"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      # No dependency cache: this job runs on main's cache scope with code that may come from
+      # a pull request, and must not write a cache that main's CI would restore.
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - run: pnpm install --frozen-lockfile
+
+      - name: Prepare directories
+        run: |
+          mkdir -p "$RUNNER_TEMP/eval/data" "$RUNNER_TEMP/eval/workspace" "$RUNNER_TEMP/eval/logs" "$RUNNER_TEMP/eval/out"
+          {
+            echo "DATA_DIR=$RUNNER_TEMP/eval/data"
+            echo "WORKSPACE_DIR=$RUNNER_TEMP/eval/workspace"
+            echo "LOG_DIR=$RUNNER_TEMP/eval/logs"
+            echo "LIB_OUT=$RUNNER_TEMP/eval/out"
+          } >> "$GITHUB_ENV"
+
+      # Keys are passed to this step and the eval step only, never to the whole job.
+      - name: Start the server
+        env:
+          TOKEN_FACTORY_API_KEY: ${{ secrets.TOKEN_FACTORY_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          NCBI_API_KEY: ${{ secrets.NCBI_API_KEY }}
+          OPENALEX_MAILTO: ${{ vars.OPENALEX_MAILTO }}
+        run: |
+          if [ -z "$TOKEN_FACTORY_API_KEY" ]; then
+            echo "::warning title=eval keys::TOKEN_FACTORY_API_KEY is not set in environment eval; the pipeline runs without models"
+          fi
+          nohup pnpm exec tsx server/index.ts > "$RUNNER_TEMP/eval/server.log" 2>&1 &
+          echo "$!" > "$RUNNER_TEMP/eval/server.pid"
+          for _ in $(seq 1 60); do
+            if curl -fsS -o /dev/null "$LIB_BASE/api/health"; then
+              echo "server is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error title=eval server::the server did not answer /api/health within 60 s"
+          tail -n 50 "$RUNNER_TEMP/eval/server.log"
+          exit 1
+
+      - name: Run eval/library_eval.ts
+        env:
+          REVIEWS: ${{ inputs.reviews }}
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+          NCBI_API_KEY: ${{ secrets.NCBI_API_KEY }}
+          OPENALEX_MAILTO: ${{ vars.OPENALEX_MAILTO }}
+        run: |
+          set -o pipefail
+          # REVIEWS was validated above as space-separated W<digits> ids.
+          # shellcheck disable=SC2086
+          pnpm exec tsx eval/library_eval.ts $REVIEWS --fresh 2>&1 | tee "$LIB_OUT/eval.log"
+
+      - name: Stop the server
+        if: ${{ always() }}
+        run: |
+          if [ -f "$RUNNER_TEMP/eval/server.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/eval/server.pid")" 2> /dev/null || true
+          fi
+
+      - name: Compare with eval/baseline.json
+        env:
+          SHA: ${{ inputs.sha }}
+          REF: ${{ steps.target.outputs.ref }}
+        run: |
+          {
+            echo "Commit \`$SHA\` ($REF)"
+            echo
+            node eval/compare.mjs "$LIB_OUT/summary.json" eval/baseline.json
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Show the end of the server log
+        if: ${{ failure() }}
+        run: tail -n 100 "$RUNNER_TEMP/eval/server.log" || true
+
+      # Results only. The server log stays out of the artifact: artifacts are not masked
+      # the way job logs are.
+      - name: Upload results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: eval-${{ inputs.sha }}
+          path: ${{ runner.temp }}/eval/out
+          if-no-files-found: warn
+          retention-days: 90

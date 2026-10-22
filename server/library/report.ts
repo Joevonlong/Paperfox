@@ -1,4 +1,4 @@
-// Owner: lane L2. End-of-library trace files in logs/runs/<id>/ (next to api / llm / tavily / events .jsonl):
+// End-of-library trace files in logs/runs/<id>/ (next to api / llm / tavily / events .jsonl):
 //   summary.md (goals + note evidence, per-source calls, label distribution, weights, top N with every component, excluded),
 //   papers.jsonl (every scored paper, flat), relations.jsonl (every edge behind a paper).
 import { existsSync, readFileSync } from 'node:fs'
@@ -104,6 +104,6 @@ function summary(s: LibraryState, topN: number, nRel: number): string {
   const ex = s.papers.filter(p => p.excluded)
   L.push('## Excluded', '', ex.length ? `- ${dist(ex.map(p => p.excluded!.replace(/ of .*/, ' of …')))}` : '- (none)')
   for (const p of ex.slice(0, 20)) L.push(`  - ${esc(p.paper.title.slice(0, 100))} — ${p.excluded}`)
-  L.push('', '## Files', '', '- `events.jsonl` every LibraryEvent', '- `llm.jsonl` every Token Factory call', '- `api.jsonl` / `tavily.jsonl` source calls (lane L1)', '- `papers.jsonl` every scored paper with component values', '- `relations.jsonl` every edge (cites / cited_by / similar) and search hit')
+  L.push('', '## Files', '', '- `events.jsonl` every LibraryEvent', '- `llm.jsonl` every Token Factory call', '- `api.jsonl` / `tavily.jsonl` source calls', '- `papers.jsonl` every scored paper with component values', '- `relations.jsonl` every edge (cites / cited_by / similar) and search hit')
   return L.join('\n') + '\n'
 }

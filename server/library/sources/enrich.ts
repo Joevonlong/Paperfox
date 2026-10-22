@@ -1,4 +1,4 @@
-// Owner: lane L1. Enrichment: OpenAlex works (full fields), venues (/sources), first/last/corresponding authors (/authors),
+// Enrichment: OpenAlex works (full fields), venues (/sources), first/last/corresponding authors (/authors),
 // PubMed PublicationType + MeSH, abstract waterfall OpenAlex → PubMed → arXiv summary → Europe PMC. Then Cand → EnrichedRecord.
 import type { Paper } from '@shared/contracts'
 import type { Hit } from '@shared/library'

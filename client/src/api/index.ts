@@ -1,4 +1,4 @@
-// Discovery API client. Owner: lane C.
+// Discovery API client.
 // startRun → POST /api/runs; stream → EventSource /api/runs/:id/stream (or /api/demo/stream with ?demo=1).
 // R-3.1 / F-50: no automatic mock fallback; failures throw and the caller shows an error with Retry.
 // The dev mock (./mock.ts) loads only in dev builds with ?mock=1 (dynamic import, dropped from production builds).

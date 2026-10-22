@@ -1,17 +1,18 @@
-// Notes vault (IndexedDB via idb-keyval). Owner: lane B / W2. Lane C calls upsert() to add literature notes.
+// Notes vault (IndexedDB via idb-keyval). Discovery and Library views call upsert() to add literature notes.
 // D-33: one folder per research question: Questions/<name>/Question.md (type: question) + Questions/<name>/seeds/S<n> ….md
 // (+ any other notes the user puts in that folder). The default vault is EMPTY. Other folders (Discovered/, Notes/) are kept.
 import { defineStore } from 'pinia'
 import { get, set } from 'idb-keyval'
+import { legacyKey } from './storage-keys'
 
 export type NoteKind = 'seed' | 'lit' | 'note'
 export interface Note { path: string; kind: NoteKind; title: string; content: string; paperId?: string; updatedAt: number }
 export interface Folder { name: string; notes: Note[] }
 export interface Question { id: string; name: string; folder: string; path: string; text: string }
 
-const DB_KEY = 'papertrail:vault:v1'
-const MIGRATED_KEY = 'papertrail:vault:questions-migrated'
-const CURRENT_KEY = 'papertrail:question:current'
+const DB_KEY = 'paperfox:vault:v1'
+const MIGRATED_KEY = 'paperfox:vault:questions-migrated'
+const CURRENT_KEY = 'paperfox:question:current'
 export const QUESTIONS_DIR = 'Questions'
 export const FOLDERS = [QUESTIONS_DIR] as const
 /** Legacy (pre D-33) single question note; migrated into a question folder on first load. */
@@ -42,6 +43,17 @@ const lsGet = (k: string) => { try { return localStorage.getItem(k) } catch { re
 const lsSet = (k: string, v: string | null) => { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v) } catch { /* private mode */ } }
 
 let saveTimer: ReturnType<typeof setTimeout> | undefined
+
+/** The stored notes. Before the rename to Paperfox they lived under the legacy key: copy them over once (storage-keys.ts). */
+async function readVault(): Promise<Note[] | undefined> {
+  const stored = await get<Note[]>(DB_KEY)
+  if (stored !== undefined) return stored
+  const legacy = await get<Note[]>(legacyKey(DB_KEY)!)
+  if (legacy !== undefined) {
+    try { await set(DB_KEY, legacy) } catch { /* the next save writes them under the new key */ }
+  }
+  return legacy
+}
 
 // ---- D-37: write-through to the server's question folders (WORKSPACE_DIR/<question>/…) ----
 /** "Questions/<q>/<rel>" → { q, rel } (rel = path inside the question folder). */
@@ -107,8 +119,8 @@ export const useVault = defineStore('vault', {
   actions: {
     async load() {
       try {
-        const stored = await get<Note[]>(DB_KEY)
-        // Keep notes lane C may have upserted before load finished.
+        const stored = await readVault()
+        // Keep notes that were upserted before load finished.
         const fresh = this.notes
         this.notes = Array.isArray(stored) ? stored : []
         for (const n of fresh) { const i = this.notes.findIndex(x => x.path === n.path); if (i >= 0) this.notes[i] = n; else this.notes.push(n) }
@@ -178,7 +190,9 @@ export const useVault = defineStore('vault', {
     persist() {
       clearTimeout(saveTimer)
       saveTimer = setTimeout(() => {
-        set(DB_KEY, JSON.parse(JSON.stringify(this.notes))).catch(() => { this.error = 'Saving to IndexedDB failed.' })
+        const failed = () => { this.error = 'Saving to IndexedDB failed.' }
+        // set() throws synchronously when IndexedDB does not exist at all (old browsers, Node), so catch both ways.
+        try { set(DB_KEY, JSON.parse(JSON.stringify(this.notes))).catch(failed) } catch { failed() }
       }, 150)
     },
     setCurrent(id: string | null) { this.current = id; lsSet(CURRENT_KEY, id) },
@@ -209,7 +223,7 @@ export const useVault = defineStore('vault', {
       if (this.current === oldName) this.setCurrent(next)
       this.persist()
       void call(qUrl(oldName), json('PATCH', { name: next }))
-      try { const last = localStorage.getItem(`papertrail:lastLibrary:${oldName}`); if (last) { localStorage.setItem(`papertrail:lastLibrary:${next}`, last); localStorage.removeItem(`papertrail:lastLibrary:${oldName}`) } } catch { /* private mode */ }
+      try { const last = localStorage.getItem(`paperfox:lastLibrary:${oldName}`); if (last) { localStorage.setItem(`paperfox:lastLibrary:${next}`, last); localStorage.removeItem(`paperfox:lastLibrary:${oldName}`) } } catch { /* private mode */ }
       return next
     },
     /** Removes the whole question folder (Question.md, seeds, notes in it); the server moves it to workspace/.trash/. */

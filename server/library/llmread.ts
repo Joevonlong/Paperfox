@@ -1,4 +1,4 @@
-// Owner: lane L2. LLM read (spec §5, lowest weight by design): the judge model reads title + abstract of the
+// LLM read (docs/features/quality-score.md; lowest weight by design): the judge model reads title + abstract of the
 // top `llmReadTopK` papers by pre-LLM score. Quote verified against the abstract. Never throws; no key → empty map.
 import { z } from 'zod'
 import { LlmRead, type Goals } from '@shared/library'

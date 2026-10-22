@@ -1,4 +1,4 @@
-// Library chat state (lane U2, D-26 / D-29). History per libraryId, persisted in localStorage (best effort).
+// Library chat state (D-26 / D-29). History per libraryId, persisted in localStorage (best effort).
 // POST /api/library/:id/chat for each user turn; Apply on a proposal → useLibrary().applyProposal → POST /applied.
 import { defineStore } from 'pinia'
 import { ChatResponse, type Proposal } from '@shared/library'
@@ -20,7 +20,7 @@ export interface ChatTurn {
   settingsAt?: LibSettings // the settings the proposal was made against (for the diff card)
 }
 
-const KEY = (id: string) => `papertrail:chat:${id}`
+const KEY = (id: string) => `paperfox:chat:${id}`
 const uid = () => Math.random().toString(36).slice(2, 10)
 
 function loadTurns(id: string): ChatTurn[] {

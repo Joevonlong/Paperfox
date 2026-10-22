@@ -1,4 +1,4 @@
-// Library-mode hold-out eval (same spirit as eval/holdout.py, docs/RANKING_AND_STORAGE.md §1).
+// Library-mode hold-out eval (same spirit as eval/holdout.py; results in eval/RESULTS_SEED_PIPELINE.md).
 // For each real review: keep 5 of its references as the vault (seed notes with DOIs + a Question note = review title),
 // hide the rest, run the real Library pipeline (POST /api/library), and count how many hidden references come back.
 // Baselines: PubMed esearch (relevance) and OpenAlex search with the review title, top 30.
@@ -109,7 +109,7 @@ function rescore(papers: LibPaper[], w: Weights): LibPaper[] {
 
 async function pubmedTop(title: string, exclude: (x: any) => boolean, maxDate?: string) {
   const u = new URL('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi')
-  u.searchParams.set('db', 'pubmed'); u.searchParams.set('term', title); u.searchParams.set('retmax', '40'); u.searchParams.set('retmode', 'json'); u.searchParams.set('sort', 'relevance'); u.searchParams.set('tool', 'papertrail')
+  u.searchParams.set('db', 'pubmed'); u.searchParams.set('term', title); u.searchParams.set('retmax', '40'); u.searchParams.set('retmode', 'json'); u.searchParams.set('sort', 'relevance'); u.searchParams.set('tool', 'paperfox')
   if (maxDate) { u.searchParams.set('datetype', 'pdat'); u.searchParams.set('mindate', '1900/01/01'); u.searchParams.set('maxdate', maxDate.replace(/-/g, '/')) }
   if (process.env.OPENALEX_MAILTO) u.searchParams.set('email', process.env.OPENALEX_MAILTO)
   if (process.env.NCBI_API_KEY) u.searchParams.set('api_key', process.env.NCBI_API_KEY)

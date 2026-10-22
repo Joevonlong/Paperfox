@@ -1,4 +1,4 @@
-// Lane U2. Tiny, safe markdown → HTML for chat replies: everything is escaped first, then a small subset is
+// Tiny, safe markdown → HTML for chat replies: everything is escaped first, then a small subset is
 // re-introduced (paragraphs, bullet / numbered lists, headings, **bold**, *italic*, `code`, http(s) links) plus
 // paper citations [#rank Title] → <a class="cite" data-rank="rank">, which the panel turns into "open paper".
 

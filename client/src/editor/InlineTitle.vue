@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// CR-8 (F-64, lane W2): Obsidian / Apple Notes style inline title above the note body. Title = the note's name; for a
+// CR-8 (F-64): Obsidian / Apple Notes style inline title above the note body. Title = the note's name; for a
 // question note (Questions/<subject>/Question.md) it is the subject = the folder name. Editing it renames the note / folder.
 import { computed, ref, watch } from 'vue'
 import { useVault } from '../stores/vault'

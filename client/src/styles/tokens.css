@@ -1,4 +1,4 @@
-/* Owner: lane B. Brightfield (light) / Fluorescence (dark) tokens; see docs/plan.html for the palette. */
+/* Brightfield (light) / Fluorescence (dark) tokens. */
 :root{
   --bg:#F3F4F7; --surface:#FFFFFF; --surface-2:#EBEDF2; --fg:#1D1A2C; --muted:#5D5A70; --line:#D8DAE3; --line-2:#B9BCCB;
   --seed:#3B2E88; --seed-soft:rgba(59,46,136,.12); --cand:#BF3468; --cand-soft:rgba(191,52,104,.12);

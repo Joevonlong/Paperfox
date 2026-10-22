@@ -1,4 +1,4 @@
-// Seed and literature note builders (Markdown + front matter). Owner: lane C.
+// Seed and literature note builders (Markdown + front matter).
 // Paths follow shared/contracts.ts: 'Seeds/S1 Tirosh 2016.md', 'Discovered/<Author> <Year> <first 5 title words>.md'.
 import { ROUTE_LABEL, type Candidate, type Paper, type Seed, type Signal } from '@shared/contracts'
 
