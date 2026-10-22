@@ -1,5 +1,6 @@
-// Shared contracts (client + server). Owner: captain. Change only with a note in hack/DECISIONS.md.
-// Spec: docs/RANKING_AND_STORAGE.md · decisions: docs/PRODUCT_PLAN.md §1
+// Shared contracts (client + server).
+// Breaking changes need an ADR (docs/adr/); additive changes need a note in the PR.
+// Overview: docs/architecture.md · decisions: docs/adr/
 import { z } from 'zod'
 
 export const AbstractSource = z.enum(['openalex', 'pubmed', 'europepmc'])

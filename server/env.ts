@@ -1,4 +1,4 @@
-// Loads .env.local / .env by walking up from cwd (worktrees under .claude/worktrees find the repo-root file).
+// Loads .env.local / .env from cwd and up to 7 parent folders (a worktree nested in the repo finds the root file).
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 

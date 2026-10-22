@@ -1,6 +1,6 @@
-// Owner: lane L1. Tavily web search (HIGH PRIORITY source, CR-1): question + every subtopic + every keyword group,
+// Tavily web search (HIGH PRIORITY source, CR-1): question + every subtopic + every keyword group,
 // restricted to scholarly hosts; extracts DOI / PMID / PMCID / arXiv id from URL + content.
-// Uses A2's tavilySearch (traced to tavily.jsonl, [] without a key) and identify() helpers.
+// Uses server/sources/tavily.ts tavilySearch (traced to tavily.jsonl, [] without a key) and identify() helpers.
 // Identical queries are served from an in-process cache, then from a disk cache (${DATA_DIR}/raw/tavily/<sha>.json.gz, like
 // cachedGet); each library gets a call budget (≤ 25). Network calls have a hard per-call budget (LIB_TAVILY_TIMEOUT_MS, 6 s):
 // a straggler rejects and is reported as a failed source call instead of holding the whole search stage.
@@ -14,7 +14,7 @@ import { identify, type TavilyHit, tavilySearch } from '../../sources/tavily'
 import { trace } from '../../trace'
 
 export const LIB_DOMAINS = [
-  // spec §2
+  // scholarly publishers and preprint servers
   'pubmed.ncbi.nlm.nih.gov', 'ncbi.nlm.nih.gov', 'biorxiv.org', 'medrxiv.org', 'arxiv.org', 'nature.com', 'cell.com', 'science.org', 'nejm.org',
   'thelancet.com', 'plos.org', 'frontiersin.org',
   // scholar-like hosts (CR-1)

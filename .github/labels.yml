@@ -1,0 +1,50 @@
+# The only definition of this repository's labels (name, color, description).
+# Meaning and use: CONTRIBUTING.md#labels. needs-eval and contract-change are applied
+# automatically to PRs from the path sets in .github/labeler.yml.
+
+# Type: exactly one per issue.
+- name: "type: bug"
+  color: "d73a4a"
+  description: "Something does not work as documented"
+- name: "type: feature"
+  color: "a2eeef"
+  description: "New behaviour, accepted from Discussions"
+- name: "type: docs"
+  color: "0075ca"
+  description: "Documentation only"
+- name: "type: chore"
+  color: "cfd3d7"
+  description: "Maintenance, tooling, or hardening that is not exploitable"
+
+# Status.
+- name: "status: triage"
+  color: "fbca04"
+  description: "New; a maintainer has not looked at it yet"
+- name: "status: needs-info"
+  color: "fef2c0"
+  description: "Waiting for the reporter; closed if there is no reply"
+- name: "status: ready"
+  color: "0e8a16"
+  description: "Has acceptance criteria and a milestone; can be worked on"
+- name: "status: blocked"
+  color: "b60205"
+  description: "Waiting on something named in a comment (for example an ADR)"
+
+# Standard names, recognised by GitHub and Dependabot.
+- name: "good first issue"
+  color: "7057ff"
+  description: "Small, well-described task for a first contribution"
+- name: "help wanted"
+  color: "008672"
+  description: "Maintainers would welcome a contribution"
+- name: "dependencies"
+  color: "0366d6"
+  description: "Dependency update"
+
+# Derived: applied to PRs by .github/workflows/label-pr.yml.
+- name: "needs-eval"
+  color: "5319e7"
+  description: "Touches search, scoring or models; a maintainer runs the evaluation"
+- name: "contract-change"
+  color: "e99695"
+  description: "Touches shared contracts, the container, workflows or package.json"

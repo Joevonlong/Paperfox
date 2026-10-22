@@ -1,4 +1,4 @@
-// Owner: lane D (infra). Demo mode: replays server/demo/recordings/melanoma.json (client uses it with ?demo=1).
+// Demo mode: replays server/demo/recordings/melanoma.json (client uses it with ?demo=1).
 //   GET /api/demo/stream    text/event-stream, one unnamed `data: <RunEvent JSON>` message per event, ~5 s in total
 //   GET /api/demo/snapshot  RunSnapshot
 // Library demo (CR-3): replays server/demo/recordings/library-melanoma.json, a REAL Library run recorded by scripts/record-library.ts.

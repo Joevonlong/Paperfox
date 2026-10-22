@@ -1,4 +1,4 @@
-// Library mode contracts (captain-owned). Spec: docs/LIBRARY_SPEC.md.
+// Library mode contracts. Behaviour: docs/features/ (library-build, quality-score, ...); flows: docs/architecture.md.
 // The whole vault is one research topic: goals → multi-source search → label → quality-score with evidence → top N.
 import { z } from 'zod'
 import { Paper, SourceRef } from './contracts'
@@ -29,7 +29,7 @@ export const LibraryRequest = z.object({
   weights: Weights.default(DEFAULT_WEIGHTS),
   maxCandidates: z.number().int().min(50).max(3000).default(600), // pile size cap before scoring
   llmReadTopK: z.number().int().min(0).max(100).default(40), // LLM reads only the best pre-scored papers
-  questionId: z.string().max(200).optional(), // D-33: the research question folder this build reads (Questions/<name>/)
+  questionId: z.string().max(200).optional(), // D-33: the research question folder this build reads (${WORKSPACE_DIR}/<name>/)
   questionName: z.string().max(200).optional(),
 })
 export type LibraryRequest = z.infer<typeof LibraryRequest>
@@ -109,7 +109,7 @@ export const LibPaper = z.object({
   relations: z.array(z.object({ type: z.enum(['cites', 'cited_by', 'similar', 'same_query']), paperId: z.string(), note: z.string().optional() })),
   components: z.array(ScoreComponent),
   total: z.number(), // 0..1
-  passed: z.boolean(), // total ≥ threshold and not excluded
+  passed: z.boolean(), // D-27/D-38: top X% of non-excluded papers AND total ≥ threshold AND not off-topic by the LLM read
   excluded: z.string().nullable(), // hard gate reason (retracted, duplicate, off-language…)
   rank: z.number(), // 1 = best
   llmRead: LlmRead.nullable(),
@@ -152,10 +152,11 @@ export type LibrarySummary = z.infer<typeof LibrarySummary>
 //   GET  /api/library/:id/papers/:paperId   the per-paper JSON file (LibPaper)
 //   GET  /api/libraries?questionId=         { libraries: LibrarySummary[] } newest first (D-35)
 //   PATCH /api/library/:id                  { name } -> LibrarySummary (rename)
-//   DELETE /api/library/:id                 moves the folder to ${DATA_DIR}/library/.trash/ -> { ok }
+//   DELETE /api/library/:id                 moves the folder to a .trash/ folder next to it -> { ok }
 //   GET  /api/library/:id/export            one JSON download { library, goals, papers }
 //   POST /api/seeds/import                  multipart file (.bib .ris .json .csv .txt .pdf) -> { ids, format, file } (D-36)
-// Files: ${DATA_DIR}/library/<libraryId>/{goals.json, library.json, papers/<paperId>.json}; traces in logs/runs/<libraryId>/.
+// Files: ${WORKSPACE_DIR}/<question>/libraries/<libraryId>/{goals.json, library.json, graph.json, papers/<paperId>.json}
+//   (or ${DATA_DIR}/library/<libraryId>/ for builds without a question); traces in ${LOG_DIR}/runs/<libraryId>/.
 
 // ---- Chat (D-26, D-29) -------------------------------------------------------------------------------
 export const ChatMessage = z.object({ role: z.enum(['user', 'assistant']), content: z.string() })

@@ -1,4 +1,4 @@
-// Owner: lane L1. arXiv Atom API (export.arxiv.org/api/query). ≤1 request / 3 s via the 'arxiv' gate; cached.
+// arXiv Atom API (export.arxiv.org/api/query). ≤1 request / 3 s via the 'arxiv' gate; cached.
 import { cachedGet } from '../../data/http'
 import { decodeXml } from '../../sources/pubmed'
 

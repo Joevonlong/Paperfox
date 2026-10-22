@@ -1,4 +1,4 @@
-// Owner: lane W2 (D-37). One parent folder per research question on disk — the server is the source of truth:
+// One parent folder per research question on disk — the server is the source of truth:
 //   ${WORKSPACE_DIR}/<question>/{Question.md, seeds/*.md, notes/*.md, libraries/<libraryId>/…, exports/}
 // The question id IS the folder name (a safe file name). Deleting moves the folder to ${WORKSPACE_DIR}/.trash/.
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs'

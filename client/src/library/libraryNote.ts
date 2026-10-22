@@ -1,4 +1,4 @@
-// Literature note for a Library paper (lane L3). Same path and front matter style as discover/literatureNote.ts,
+// Literature note for a Library paper. Same path and front matter style as discover/literatureNote.ts,
 // plus labels, the total score and its top evidence lines.
 import type { LibPaper } from '@shared/library'
 import { litNoteName, litNotePath, sourceLinks } from '../discover/literatureNote'

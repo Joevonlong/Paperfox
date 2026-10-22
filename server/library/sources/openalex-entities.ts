@@ -1,4 +1,4 @@
-// Owner: lane L1. Per-entity OpenAlex cache. The raw HTTP cache (server/data/http.ts) is keyed by the exact request URL, so a
+// Per-entity OpenAlex cache. The raw HTTP cache (server/data/http.ts) is keyed by the exact request URL, so a
 // batch `filter=openalex_id:W1|W2|…` with a different id set misses even when every entity was fetched before. This store keeps
 // every work / author / source object individually (key = OpenAlex short id; works also under DOI and PMID aliases), plus
 // "not found" markers for ids a batch asked for and OpenAlex did not return. Batches serve what is here and request only the rest.

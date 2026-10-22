@@ -4,7 +4,7 @@ import type { Candidate, Judgement, Paper } from '@shared/contracts'
 import { Candidate as CandidateSchema } from '@shared/contracts'
 import { assignLane, computeLinks, diversify, freshCutoff, inLinkAllowed, orderLanes, percentiles, whyRanked, type PoolItem, type SeedLite } from './rank'
 
-const snapshot = JSON.parse(readFileSync(new URL('../../docs/data/melanoma-lanes-snapshot.json', import.meta.url), 'utf8'))
+const snapshot = JSON.parse(readFileSync(new URL('../demo/fixtures/melanoma-lanes-snapshot.json', import.meta.url), 'utf8'))
 
 const SEEDS: SeedLite[] = [
   { n: 1, id: 'W2332292689', year: 2016, label: 'S1', shortName: 'Tirosh 2016' },
@@ -47,7 +47,7 @@ describe('lane precedence', () => {
     expect(assignLane({ ...base, publicationDate: '2024-02-01', year: 2024 }, 1, fresh)).toBe('Linked')
     expect(assignLane({ ...base, publicationDate: '2024-02-01', year: 2024 }, 0, fresh)).toBe('Bridges')
   })
-  it('agrees with the real melanoma snapshot (docs/data)', () => {
+  it('agrees with the real melanoma snapshot (server/demo/fixtures)', () => {
     for (const [lane, items] of Object.entries(snapshot.top) as [string, any[]][]) {
       for (const it of items) {
         const got = assignLane({ isRetracted: it.retr, abstract: 'present', publicationDate: it.dt, year: it.y }, it.n, fresh)

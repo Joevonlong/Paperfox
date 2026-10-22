@@ -1,4 +1,4 @@
-// Notes vault (IndexedDB via idb-keyval). Owner: lane B / W2. Lane C calls upsert() to add literature notes.
+// Notes vault (IndexedDB via idb-keyval). Discovery and Library views call upsert() to add literature notes.
 // D-33: one folder per research question: Questions/<name>/Question.md (type: question) + Questions/<name>/seeds/S<n> ….md
 // (+ any other notes the user puts in that folder). The default vault is EMPTY. Other folders (Discovered/, Notes/) are kept.
 import { defineStore } from 'pinia'
@@ -108,7 +108,7 @@ export const useVault = defineStore('vault', {
     async load() {
       try {
         const stored = await get<Note[]>(DB_KEY)
-        // Keep notes lane C may have upserted before load finished.
+        // Keep notes that were upserted before load finished.
         const fresh = this.notes
         this.notes = Array.isArray(stored) ? stored : []
         for (const n of fresh) { const i = this.notes.findIndex(x => x.path === n.path); if (i >= 0) this.notes[i] = n; else this.notes.push(n) }
@@ -178,7 +178,9 @@ export const useVault = defineStore('vault', {
     persist() {
       clearTimeout(saveTimer)
       saveTimer = setTimeout(() => {
-        set(DB_KEY, JSON.parse(JSON.stringify(this.notes))).catch(() => { this.error = 'Saving to IndexedDB failed.' })
+        const failed = () => { this.error = 'Saving to IndexedDB failed.' }
+        // set() throws synchronously when IndexedDB does not exist at all (old browsers, Node), so catch both ways.
+        try { set(DB_KEY, JSON.parse(JSON.stringify(this.notes))).catch(failed) } catch { failed() }
       }, 150)
     },
     setCurrent(id: string | null) { this.current = id; lsSet(CURRENT_KEY, id) },

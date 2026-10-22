@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Discover sidebar: question, seeds, preset, run, step trail, lens, lanes. Owner: lane C.
+// Discover sidebar: question, seeds, preset, run, step trail, lens, lanes.
 import { computed, onMounted, reactive, ref } from 'vue'
 import type { Lane } from '@shared/contracts'
 import { PRESETS } from '@shared/config'

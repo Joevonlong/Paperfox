@@ -1,4 +1,4 @@
-// Shared UI state. Owner: captain (lanes B and C both read/write through these actions only).
+// Shared UI state. Workspace and discovery views read/write it through these actions only.
 // CR-6 (F-63): in-app navigation history. Every open*/activate pushes an entry; ui.back()/ui.forward() restore the
 // tab plus the view state it had when the user left it (scroll, focused item, graph zoom/selection, chat scroll).
 // Views write their live state with ui.saveView(key, patch) (key = tab id, or 'chat' / 'graph'); a restore copies
@@ -24,7 +24,7 @@ export interface ViewState {
 export type NavFrom = 'chat' | 'graph' | 'list' | 'tree' | 'tabs' | 'history' | (string & {})
 export interface NavOpts {
   from?: NavFrom
-  /** Free data for the view that owns the tab (e.g. W2: { libraryId }) — read it back from ui.restoring.entry.meta. */
+  /** Free data for the view that owns the tab (e.g. the Library view: { libraryId }) — read it back from ui.restoring.entry.meta. */
   meta?: Record<string, unknown>
   /** Push a new entry even when the tab is already the current one (e.g. a different library in the same tab). */
   force?: boolean
@@ -71,7 +71,7 @@ export const useUi = defineStore('ui', {
     },
     openNote(path: string, title: string, opts?: NavOpts) { this.open({ id: 'note:' + path, kind: 'note', title, ref: path }, opts) },
     openPreview(paperId: string, title: string, opts?: NavOpts) { this.selectedPaperId = paperId; this.open({ id: 'preview:' + paperId, kind: 'preview', title, ref: paperId }, opts) },
-    /** Library mode (lane L3): results table and per-paper view reuse kind 'preview' with a 'lib:' ref. */
+    /** Library mode: results table and per-paper view reuse kind 'preview' with a 'lib:' ref. */
     openLibrary(opts?: NavOpts) { this.open({ id: 'preview:lib:results', kind: 'preview', title: 'Library', ref: 'lib:results' }, opts) },
     openLibPaper(paperId: string, title: string, opts?: NavOpts) { this.selectedPaperId = paperId; this.open({ id: 'preview:lib:paper:' + paperId, kind: 'preview', title, ref: 'lib:paper:' + paperId }, opts) },
     openGraph(opts?: NavOpts) { this.open({ id: 'graph', kind: 'graph', title: 'Graph', ref: 'graph' }, opts) },

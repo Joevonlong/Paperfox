@@ -1,4 +1,4 @@
-// Library internal types shared by lanes L1 (sources/enrich) and L2 (goals/labels/score/pipeline). Captain-owned.
+// Library internal types shared by search (sources/enrich) and scoring (goals/labels/score/pipeline).
 import type { Paper } from '@shared/contracts'
 import type { Goals, Hit, LibraryRequest, SourceName } from '@shared/library'
 import type { z } from 'zod'
@@ -33,7 +33,7 @@ export interface EnrichedRecord {
 
 export interface SourceCall { source: SourceName; query: string; count: number; ms: number; error?: string }
 
-/** L1 entry points (implemented in server/library/sources/index.ts). */
+/** Search entry points (implemented in server/library/sources/index.ts). */
 export interface SourcesApi {
   /** Runs keyword + subtopic searches on the requested sources, plus graph expansion of goals.knownPapers. */
   gather(goals: Goals, req: LibraryRequest, onCall: (c: SourceCall) => void): Promise<EnrichedRecord[]>

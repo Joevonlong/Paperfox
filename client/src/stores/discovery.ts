@@ -1,4 +1,4 @@
-// Run state from the SSE stream. Owner: lane C.
+// Run state from the SSE stream.
 import { defineStore } from 'pinia'
 import { StageName, type Candidate, type Facet, type Lane, type RunEvent, type RunPreset, type Seed } from '@shared/contracts'
 import { runDiscovery, type RunHandle, type RunMode } from '../api'

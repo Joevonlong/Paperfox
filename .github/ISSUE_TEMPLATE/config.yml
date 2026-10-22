@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ideas and feature requests
+    url: https://github.com/Joevonlong/PaperTrail/discussions/categories/ideas
+    about: Propose a feature or a larger change. A maintainer opens an issue once an idea is accepted.
+  - name: Questions
+    url: https://github.com/Joevonlong/PaperTrail/discussions/categories/q-a
+    about: Ask how to set up or use PaperTrail.
+  - name: Report a vulnerability
+    url: https://github.com/Joevonlong/PaperTrail/security/advisories/new
+    about: Report security issues privately. Please do not open a public issue.

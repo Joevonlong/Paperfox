@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Lane W2 (D-36): seeds of the CURRENT question only — table (title, year, id, status, open, remove) + paste ids + file upload.
+// D-36: seeds of the CURRENT question only — table (title, year, id, status, open, remove) + paste ids + file upload.
 import { computed, ref } from 'vue'
 import { useVault } from '../../stores/vault'
 import { useLibrary, seedInfo } from '../../stores/library'

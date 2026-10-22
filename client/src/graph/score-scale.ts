@@ -1,4 +1,4 @@
-// Owner: lane C. F-45 + CR-12 (decided 18:20): library node size AND blue fill follow the total score over the drawn nodes'
+// F-45 + CR-12 (decided 18:20): library node size AND blue fill follow the total score over the drawn nodes'
 // min–max score, so the gradient is visible (lowest drawn → R_MIN px and lightest blue, highest → R_MAX px and darkest blue).
 // One mapping t ∈ [0,1] drives both, so size and colour always agree. When every drawn score is equal (max − min < 0.01),
 // all nodes take the middle size and colour.

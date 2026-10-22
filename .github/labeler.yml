@@ -1,0 +1,32 @@
+# Path sets for the labels that .github/workflows/label-pr.yml adds to pull requests
+# (actions/labeler v5+ format). This file is the only place these paths are listed.
+
+# Search, scoring and model code: a maintainer runs the ranking evaluation.
+needs-eval:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "server/ai/**"
+              - "server/library/**"
+              - "server/discovery/**"
+              - "server/sources/**"
+              - "server/data/http.ts"
+              - "shared/library.ts"
+      # Dependabot updates of the AI SDK packages ("ai", "@ai-sdk/*"), single or grouped.
+      - head-branch:
+          - "^dependabot/npm_and_yarn/ai-(sdk|[0-9])"
+
+# Contracts and deployment surface: reviewers check compatibility (CONTRIBUTING.md#versioning).
+# Tests next to shared/ code do not change a contract.
+contract-change:
+  - any:
+      - changed-files:
+          - all-globs-to-any-file:
+              - "shared/**"
+              - "!shared/**/*.test.ts"
+      - changed-files:
+          - any-glob-to-any-file:
+              - "server/data/migrations/**"
+              - "Dockerfile"
+              - ".github/workflows/**"
+              - "package.json"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Lane W2 (D-35): saved libraries of the current question — open (no rebuild), rename, delete with an in-app confirm, export JSON.
+// D-35: saved libraries of the current question — open (no rebuild), rename, delete with an in-app confirm, export JSON.
 import { ref } from 'vue'
 import { useLibrary } from '../../stores/library'
 import { useUi } from '../../stores/ui'

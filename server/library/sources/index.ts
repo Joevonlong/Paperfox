@@ -1,4 +1,4 @@
-// Owner: lane L1. gather() = search all sources → graph expansion → normalize/resolve/dedupe → cap → enrich.
+// gather() = search all sources → graph expansion → normalize/resolve/dedupe → cap → enrich.
 // One failing source never fails gather(): every call is wrapped, timed, and reported through onCall.
 import type { Goals, Hit, LibraryRequest, SourceName } from '@shared/library'
 import { mapLimit } from '../../data/http'
@@ -187,7 +187,7 @@ export async function gather(goals: Goals, req: LibraryRequest, onCall: (c: Sour
       let doi: string | null = id.kind === 'doi' ? id.value : id.kind === 'arxiv' ? arxivDoi(id.value) : null
       await call('openalex', `resolve known paper ${k.raw}`, async () => {
         const ref = id.kind === 'arxiv' ? { kind: 'doi' as const, value: arxivDoi(id.value) } : { kind: id.kind as 'openalex' | 'doi' | 'pmid', value: id.value }
-        // entity cache first (any earlier batch / search that saw this work), then the A1 helper's URL cache (same as discovery mode)
+        // entity cache first (any earlier batch / search that saw this work), then the discovery client's URL cache (same as discovery mode)
         let f: { value: { id: string; referencedWorks: string[]; pmid: string | null; doi: string | null } } | null = null
         try {
           const w = await workFor(budget, ref.kind === 'openalex' ? 'openalex_id' : ref.kind, ref.value, 'known-paper')
